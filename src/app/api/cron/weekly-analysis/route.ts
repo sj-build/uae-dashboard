@@ -39,7 +39,7 @@ async function analyzeQuestionsWithAI(questions: readonly { query: string; succe
 
   const client = getAnthropicClient()
 
-  const prompt = `You are analyzing user questions from a UAE information dashboard called "UAE 101".
+  const prompt = `You are analyzing user questions from a UAE information dashboard called "All About UAE".
 
 Here are the questions users asked this week:
 ${questions.map((q, i) => `${i + 1}. "${q.query}" (${q.success ? 'answered successfully' : 'failed to answer'})`).join('\n')}

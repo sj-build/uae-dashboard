@@ -33,7 +33,7 @@ function LoginForm({ onLogin }: { readonly onLogin: (password: string) => Promis
         <div className="bg-bg2 border border-brd rounded-xl p-8 shadow-2xl">
           <div className="text-center mb-8">
             <h1 className="font-display text-xl font-bold text-gold tracking-wide">
-              UAE 101 ADMIN
+              All About UAE ADMIN
             </h1>
             <p className="text-t3 text-xs mt-1.5">
               Authentication required

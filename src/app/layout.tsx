@@ -22,7 +22,7 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'UAE 101 — Intelligence Dashboard',
+  title: 'All About UAE — Intelligence Dashboard',
   description: 'UAE 종합 인텔리전스 대시보드. 7개 절대군주제의 연방국가를 한국 투자자 관점에서 분석.',
 }
 

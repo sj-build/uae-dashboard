@@ -38,7 +38,7 @@ export function AdminSidebar({ onLogout }: AdminSidebarProps) {
       <div className="p-5 border-b border-brd">
         <Link href="/admin" className="block">
           <span className="font-display text-base font-bold text-gold tracking-wide">
-            UAE 101 ADMIN
+            All About UAE ADMIN
           </span>
           <span className="block text-t3 text-[10px] mt-0.5 tracking-tight">
             Management Console

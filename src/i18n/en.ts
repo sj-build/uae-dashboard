@@ -12,7 +12,7 @@ export const en: Translations = {
     search: 'Ask Me',
   },
   header: {
-    title: 'UAE 101',
+    title: 'All About UAE',
     subtitle: 'Intelligence Dashboard',
   },
   search: {

@@ -11,7 +11,7 @@ export function Footer() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <div className="w-[2px] h-3.5 rounded-full bg-gradient-to-b from-gold/60 to-gold2/30" />
-            <span className="text-[10px] font-display font-bold text-gold/50 tracking-wider">UAE 101</span>
+            <span className="text-[10px] font-display font-bold text-gold/50 tracking-wider">All About UAE</span>
           </div>
           <div className="text-[10px] text-t4/70 tracking-wide">
             {locale === 'ko'
