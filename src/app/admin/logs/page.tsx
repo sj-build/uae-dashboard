@@ -149,7 +149,7 @@ function ReportDetailModal({
                     <div className="flex flex-wrap gap-1">
                       {gap.questionExamples.map((q: string, qIdx: number) => (
                         <span key={qIdx} className="px-2 py-0.5 text-[10px] bg-bg3 text-t4 rounded">
-                          "{q}"
+                          &quot;{q}&quot;
                         </span>
                       ))}
                     </div>

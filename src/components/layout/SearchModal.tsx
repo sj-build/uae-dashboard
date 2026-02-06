@@ -64,6 +64,7 @@ export function SearchModal({ isOpen, onClose, initialQuery }: SearchModalProps)
   } = useSearch()
   const [isFocused, setIsFocused] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
+  const hasExecutedInitialQuery = useRef(false)
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -74,10 +75,18 @@ export function SearchModal({ isOpen, onClose, initialQuery }: SearchModalProps)
 
   // Handle initial query from quick questions
   useEffect(() => {
-    if (isOpen && initialQuery && !isLoading && messages.length === 0) {
-      search(initialQuery)
+    if (isOpen && initialQuery && !hasExecutedInitialQuery.current && messages.length === 0) {
+      hasExecutedInitialQuery.current = true
+      // Defer search to next tick to avoid cascading renders
+      const timeoutId = setTimeout(() => {
+        search(initialQuery)
+      }, 0)
+      return () => clearTimeout(timeoutId)
     }
-  }, [isOpen, initialQuery, isLoading, messages.length, search])
+    if (!isOpen) {
+      hasExecutedInitialQuery.current = false
+    }
+  }, [isOpen, initialQuery, messages.length, search])
 
   useEffect(() => {
     if (isOpen) {
