@@ -2,9 +2,13 @@ import { NextResponse } from 'next/server'
 import { getAnthropicClient } from '@/lib/anthropic'
 import { SEARCH_SYSTEM_PROMPT } from '@/lib/search-prompt'
 import { SearchRequestSchema } from '@/types/search'
+import { logQuestion } from '@/lib/question-logger'
 import type { SearchResponse } from '@/types/search'
 
 export async function POST(request: Request): Promise<NextResponse<SearchResponse>> {
+  const startTime = Date.now()
+  let query = ''
+
   try {
     // Check if API key is configured
     if (!process.env.ANTHROPIC_API_KEY) {
@@ -24,7 +28,7 @@ export async function POST(request: Request): Promise<NextResponse<SearchRespons
       )
     }
 
-    const { query } = parseResult.data
+    query = parseResult.data.query
     const client = getAnthropicClient()
 
     const message = await client.messages.create({
@@ -46,6 +50,17 @@ export async function POST(request: Request): Promise<NextResponse<SearchRespons
         }
         return acc
       }, '')
+
+    // Log successful question (non-blocking)
+    const responseTimeMs = Date.now() - startTime
+    logQuestion({
+      query,
+      success: true,
+      responseTimeMs,
+      userAgent: request.headers.get('user-agent') || undefined,
+    }).catch(() => {
+      // Ignore logging errors
+    })
 
     return NextResponse.json({ success: true, html })
   } catch (error) {
@@ -82,6 +97,18 @@ export async function POST(request: Request): Promise<NextResponse<SearchRespons
     }
 
     console.error('Search API error:', errorMessage)
+
+    // Log failed question (non-blocking)
+    if (query) {
+      logQuestion({
+        query,
+        success: false,
+        responseTimeMs: Date.now() - startTime,
+        userAgent: request.headers.get('user-agent') || undefined,
+      }).catch(() => {
+        // Ignore logging errors
+      })
+    }
 
     return NextResponse.json(
       { success: false, error: '검색 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.' },
