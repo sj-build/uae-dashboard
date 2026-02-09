@@ -14,8 +14,37 @@ import {
   isChatAllowed,
 } from './session'
 import { getAnthropicClient } from '@/lib/anthropic'
-import { SEARCH_SYSTEM_PROMPT } from '@/lib/search-prompt'
 import type { TelegramMessage, TelegramSession } from './types'
+
+const TELEGRAM_SYSTEM_PROMPT = `You are the All About UAE AI assistant on Telegram.
+
+RULES:
+1. Answer in the SAME LANGUAGE as the user's question.
+2. Keep answers concise (under 1500 characters). Telegram messages should be scannable.
+3. Formatting: Use ONLY Telegram-safe HTML tags:
+   - <b>bold text</b> for emphasis and section headers
+   - <i>italic text</i> for supplementary info
+   - <code>code</code> for numbers, percentages, or technical terms
+   - Line breaks for structure
+   - "•" bullets for lists
+   - Numbers (1. 2. 3.) for ordered steps
+4. NEVER use these HTML tags: <div>, <h1>-<h6>, <table>, <tr>, <td>, <p>, <span>, <ul>, <ol>, <li>, <strong>, <em>, <br>, <a>
+5. Use relevant emojis to make the message visually engaging (💡📌🔎✅📊🏢💰🌍🇦🇪 etc.)
+6. Structure every answer as:
+
+💡 <b>TL;DR</b>
+One sentence summary.
+
+📌 <b>Key Points</b>
+• Point 1
+• Point 2
+• Point 3
+
+🔎 <b>Details</b>
+Brief explanation with data/facts.
+
+7. If data has a date, note "as of YYYY" next to it.
+8. End with a relevant follow-up suggestion if helpful.`
 
 // Commands
 const COMMANDS = {
@@ -123,7 +152,7 @@ async function callAnthropicDirect(
   const message = await client.messages.create({
     model: 'claude-sonnet-4-20250514',
     max_tokens: 2048,
-    system: SEARCH_SYSTEM_PROMPT,
+    system: TELEGRAM_SYSTEM_PROMPT,
     messages: claudeMessages,
   })
 
@@ -138,22 +167,29 @@ async function callAnthropicDirect(
 }
 
 /**
- * Convert HTML to Telegram-compatible format
+ * Sanitize output to keep only Telegram-safe HTML tags
  */
-function stripHtmlForTelegram(html: string): string {
-  return html
+function stripHtmlForTelegram(text: string): string {
+  return text
     // Convert headers to bold
     .replace(/<h[1-6][^>]*>(.*?)<\/h[1-6]>/gi, '<b>$1</b>\n')
-    // Convert lists
-    .replace(/<li[^>]*>(.*?)<\/li>/gi, '• $1\n')
-    .replace(/<\/?[uo]l[^>]*>/gi, '')
-    // Keep allowed tags
+    // Convert <strong>/<em> to Telegram equivalents
     .replace(/<strong>(.*?)<\/strong>/gi, '<b>$1</b>')
     .replace(/<em>(.*?)<\/em>/gi, '<i>$1</i>')
-    .replace(/<code>(.*?)<\/code>/gi, '<code>$1</code>')
-    // Remove other HTML tags
-    .replace(/<[^>]+>/g, '')
-    // Clean up whitespace
+    // Convert list items to bullets
+    .replace(/<li[^>]*>(.*?)<\/li>/gi, '• $1\n')
+    // Convert <br> to newline
+    .replace(/<br\s*\/?>/gi, '\n')
+    // Convert <p> to double newline
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n')
+    // Remove <a> tags but keep text
+    .replace(/<a[^>]*>(.*?)<\/a>/gi, '$1')
+    // Remove list wrappers, divs, tables, spans, etc.
+    .replace(/<\/?(ul|ol|div|table|tr|td|th|thead|tbody|span|section|article|header|footer|nav|main)[^>]*>/gi, '')
+    // Preserve Telegram-safe tags: <b>, <i>, <code>, <pre>, <u>, <s>
+    // Remove any remaining unsupported HTML tags
+    .replace(/<(?!\/?(?:b|i|code|pre|u|s)(?:\s|>))[^>]+>/g, '')
+    // Clean up excessive whitespace
     .replace(/\n{3,}/g, '\n\n')
     .trim()
     // Telegram message limit
