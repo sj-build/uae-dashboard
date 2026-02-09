@@ -425,3 +425,95 @@ export function UAENowDashboard() {
     </div>
   )
 }
+
+// Compact summary card for home page (3 opportunities + 3 risks)
+const TOP_OPPORTUNITIES = [
+  { text: 'AI 데이터센터 투자 붐 (Stargate $20B+, G42/MGX)', textEn: 'AI Data Center Investment Boom (Stargate $20B+, G42/MGX)', href: '/economy' },
+  { text: '국부펀드 한국 투자 확대 (무바달라, ADIA)', textEn: 'SWF Korea Investment Expansion (Mubadala, ADIA)', href: '/comparison' },
+  { text: 'K-Beauty 중동 수출 +69.7% 성장', textEn: 'K-Beauty Middle East Exports +69.7% Growth', href: '/industry' },
+]
+
+const TOP_RISKS = [
+  { text: '미중 갈등 속 기술 이전 규제 리스크', textEn: 'Tech Transfer Restrictions Amid US-China Tensions', href: '/politics' },
+  { text: '부동산 공급과잉 및 가격 조정 우려', textEn: 'Real Estate Oversupply & Price Correction Concerns', href: '/economy' },
+  { text: '에미라티화 고용 의무 강화 (50인↑ 기업)', textEn: 'Emiratization Hiring Requirements (50+ employees)', href: '/legal' },
+]
+
+export function OpportunityRiskSummary() {
+  const { locale } = useLocale()
+
+  return (
+    <section className="mb-6">
+      <div className="bg-bg3/60 border border-brd/50 rounded-xl overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-3 border-b border-brd/40 bg-bg2/50">
+          <div className="flex items-center gap-2">
+            <span className="text-lg">💡</span>
+            <h2 className="text-[15px] font-bold text-t1">
+              {locale === 'en' ? 'Opportunities & Risks' : '기회 & 리스크'}
+            </h2>
+          </div>
+          <Link
+            href="/economy"
+            className="text-[11px] text-t4 hover:text-gold transition-colors flex items-center gap-1"
+          >
+            {locale === 'en' ? 'Details' : '자세히'} <ArrowRight className="w-3 h-3" />
+          </Link>
+        </div>
+
+        {/* Two columns */}
+        <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-brd/40">
+          {/* Opportunities */}
+          <div className="p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <TrendingUp className="w-4 h-4 text-emerald-400" />
+              <span className="text-[13px] font-semibold text-emerald-400">
+                {locale === 'en' ? 'Opportunities' : '기회'}
+              </span>
+            </div>
+            <ul className="space-y-2">
+              {TOP_OPPORTUNITIES.map((item, i) => (
+                <li key={i}>
+                  <Link
+                    href={item.href}
+                    className="flex items-start gap-2 text-[13px] text-t2 hover:text-gold transition-colors group"
+                  >
+                    <span className="text-emerald-400/70 mt-0.5">•</span>
+                    <span className="group-hover:underline underline-offset-2">
+                      {locale === 'en' ? item.textEn : item.text}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Risks */}
+          <div className="p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <AlertTriangle className="w-4 h-4 text-rose-400" />
+              <span className="text-[13px] font-semibold text-rose-400">
+                {locale === 'en' ? 'Risks' : '리스크'}
+              </span>
+            </div>
+            <ul className="space-y-2">
+              {TOP_RISKS.map((item, i) => (
+                <li key={i}>
+                  <Link
+                    href={item.href}
+                    className="flex items-start gap-2 text-[13px] text-t2 hover:text-gold transition-colors group"
+                  >
+                    <span className="text-rose-400/70 mt-0.5">•</span>
+                    <span className="group-hover:underline underline-offset-2">
+                      {locale === 'en' ? item.textEn : item.text}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}

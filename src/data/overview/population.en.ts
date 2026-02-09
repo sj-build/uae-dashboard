@@ -2,13 +2,13 @@ import type { PopulationGroup, AgeGroup } from './population'
 
 export const populationGroups: readonly PopulationGroup[] = [
   { flag: '🇮🇳', label: 'Indian', percentage: 38, count: '~4M', color: 'linear-gradient(90deg,#f59e0b,#d97706)' },
-  { flag: '🇵🇰', label: 'Pakistani', percentage: 17, count: '~1.75M', color: 'linear-gradient(90deg,#34d399,#059669)' },
-  { flag: '🇦🇪', label: 'Emirati', percentage: 11.5, count: '~1.31M', color: 'linear-gradient(90deg,#c8a44e,#e8c85a)', bold: true },
-  { flag: '🇧🇩', label: 'Bangladeshi', percentage: 7, count: '~750K', color: '#22d3ee' },
-  { flag: '🇵🇭', label: 'Filipino', percentage: 5, count: '~550K', color: '#a78bfa' },
-  { flag: '🇪🇬', label: 'Egyptian+Arab', percentage: 8, count: '~900K', color: '#ef4444' },
-  { flag: '🌍', label: 'Western', percentage: 5, count: '~550K', color: '#4b5563' },
-  { flag: '🇰🇷', label: 'Korean', percentage: 0.3, count: '~12K', color: '#4a9eff' },
+  { flag: '🇵🇰', label: 'Pakistani', percentage: 17, count: '~1.78M', color: 'linear-gradient(90deg,#34d399,#059669)' },
+  { flag: '🇦🇪', label: 'Emirati', percentage: 11.5, count: '~1.21M', color: 'linear-gradient(90deg,#c8a44e,#e8c85a)', bold: true },
+  { flag: '🇧🇩', label: 'Bangladeshi', percentage: 7, count: '~740K', color: '#22d3ee' },
+  { flag: '🇵🇭', label: 'Filipino', percentage: 5, count: '~530K', color: '#a78bfa' },
+  { flag: '🇪🇬', label: 'Egyptian+Arab', percentage: 8, count: '~840K', color: '#ef4444' },
+  { flag: '🌍', label: 'Other Expats', percentage: 13.2, count: '~1.39M', color: '#4b5563' },
+  { flag: '🇰🇷', label: 'Korean', percentage: 0.1, count: '~12K', color: '#4a9eff' },
 ] as const
 
 export const ageGroups: readonly AgeGroup[] = [

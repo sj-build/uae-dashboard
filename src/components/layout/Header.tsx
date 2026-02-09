@@ -2,6 +2,7 @@
 
 import { useLocale } from '@/hooks/useLocale'
 import type { Locale } from '@/i18n/types'
+import { BeginnerModeToggle } from '@/components/ui/BeginnerModeToggle'
 
 interface HeaderProps {
   readonly onSearchClick: () => void
@@ -46,6 +47,9 @@ export function Header({ onSearchClick }: HeaderProps) {
               <span className="relative z-10">{locale === 'ko' ? 'EN' : 'KO'}</span>
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
             </button>
+
+            {/* Beginner Mode Toggle */}
+            <BeginnerModeToggle compact />
 
             <div className="w-px h-5 bg-brd/60" />
 

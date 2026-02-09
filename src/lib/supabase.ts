@@ -13,7 +13,12 @@ export function getSupabaseClient() {
 }
 
 // Server client with full access (for API routes)
+// IMPORTANT: This must NEVER be called from browser/client code
 export function getSupabaseAdmin() {
+  // Security guard: prevent accidental client-side usage
+  if (typeof window !== 'undefined') {
+    throw new Error('getSupabaseAdmin must not be called from browser - use getSupabaseClient instead')
+  }
   if (!supabaseUrl || !supabaseServiceKey) {
     throw new Error('Missing Supabase admin environment variables')
   }

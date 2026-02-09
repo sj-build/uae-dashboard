@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { SectionTitle } from '@/components/ui/SectionTitle'
-import { SectionHeader } from '@/components/ui/SectionHeader'
+import { ContextHeader } from '@/components/ui/ContextHeader'
 import { StatsComparisonTable } from '@/components/overview/StatsComparisonTable'
 import { PopulationDemographics } from '@/components/overview/PopulationDemographics'
 import { BilateralRelations } from '@/components/overview/BilateralRelations'
@@ -14,24 +13,36 @@ import { useLocale } from '@/hooks/useLocale'
 const SECTION_CONTENT = {
   ko: {
     tldr: [
-      'UAE 인구 1,010만 중 자국민 11%만 - 외국인 89%가 경제 주도',
-      '1인당 GDP $55,000 (한국의 1.5배) - 오일머니 + 무관세 기반 고소득 국가',
+      'UAE 인구 1,050만 중 자국민 11.5%만 - 외국인 88.5%가 경제 주도',
+      '1인당 GDP $49,500 (한국의 1.5배) - 오일머니 + 무관세 기반 고소득 국가',
       '한-UAE 교역 $180억+ (2024) - 에너지/건설/방산 중심, 투자확대 추세',
     ],
     investorImplications: [
       '비즈니스 실무는 외국인(인도/파키스탄/필리핀)이 담당 - 에미라티는 의사결정권자',
       '에미라티 문화(와스타, 체면) 이해 필수 - 관계 중심 비즈니스 문화',
     ],
+    quickQuestions: [
+      { label: '와스타 문화', query: 'UAE의 와스타(Wasta) 문화는 무엇이고 비즈니스에 어떤 영향?' },
+      { label: '에미라티 vs 외국인', query: 'UAE에서 에미라티와 외국인의 역할 차이는?' },
+      { label: '한-UAE 교역', query: '한국과 UAE의 주요 교역 품목과 투자 현황은?' },
+      { label: '문화적 차이', query: '한국인이 UAE에서 비즈니스할 때 주의할 문화적 차이는?' },
+    ],
   },
   en: {
     tldr: [
-      'UAE population 10.1M, only 11% nationals - 89% foreigners drive the economy',
-      'GDP per capita $55,000 (1.5x Korea) - High-income nation based on oil wealth + no taxes',
+      'UAE population 10.5M, only 11.5% nationals - 88.5% foreigners drive the economy',
+      'GDP per capita $49,500 (1.5x Korea) - High-income nation based on oil wealth + no taxes',
       'Korea-UAE trade $18B+ (2024) - Focus on energy/construction/defense, investment growing',
     ],
     investorImplications: [
       'Business operations run by foreigners (Indian/Pakistani/Filipino) - Emiratis are decision-makers',
       'Understanding Emirati culture (Wasta, face) essential - Relationship-driven business culture',
+    ],
+    quickQuestions: [
+      { label: 'Wasta Culture', query: 'What is Wasta culture in UAE and how does it affect business?' },
+      { label: 'Emirati vs Expat', query: 'What is the role difference between Emiratis and expats in UAE?' },
+      { label: 'Korea-UAE Trade', query: 'What are major Korea-UAE trade items and investment status?' },
+      { label: 'Cultural Gaps', query: 'What cultural differences should Koreans be aware of in UAE?' },
     ],
   },
 }
@@ -81,14 +92,12 @@ export default function ComparisonPage() {
 
   return (
     <>
-      <SectionTitle
+      <ContextHeader
         title={p.title}
         subtitle={p.subtitle}
-      />
-
-      <SectionHeader
         tldr={content.tldr}
         investorImplications={content.investorImplications}
+        quickQuestions={content.quickQuestions}
         source={{ sourceName: 'World Bank, UAE Gov, KOTRA', asOf: '2024', method: 'official' }}
         locale={locale}
       />

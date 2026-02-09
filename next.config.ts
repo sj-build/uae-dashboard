@@ -28,6 +28,20 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'static.reuters.com',
       },
+      // Google News thumbnails
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.googleusercontent.com',
+      },
+      // Common news sites
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
     ],
   },
 };

@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react'
 import { AskMeHero } from '@/components/home/AskMeHero'
 import { QuickStart } from '@/components/home/QuickStart'
-import { UAENowSection, UAEOpportunitiesSection, UAERisksSection } from '@/components/home/UAENowDashboard'
+import { UAENowSection, OpportunityRiskSummary } from '@/components/home/UAENowDashboard'
 import { NewsHeadlines } from '@/components/overview/NewsHeadlines'
 import { SearchModal } from '@/components/layout/SearchModal'
 
@@ -32,14 +32,12 @@ export default function HomePage() {
 
       <QuickStart />
 
-      {/* Section Order: UAE Now → News → Opportunities → Risks */}
+      {/* Section Order: UAE Now → Opportunities/Risks → News */}
       <UAENowSection />
 
+      <OpportunityRiskSummary />
+
       <NewsHeadlines />
-
-      <UAEOpportunitiesSection />
-
-      <UAERisksSection />
 
       <SearchModal isOpen={isSearchOpen} onClose={handleCloseSearch} initialQuery={initialQuery} />
     </>

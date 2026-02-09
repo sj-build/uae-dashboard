@@ -148,6 +148,18 @@ export function SearchModal({ isOpen, onClose, initialQuery }: SearchModalProps)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, onClose])
 
+  // Listen for prefill events from ContextHeader
+  useEffect(() => {
+    function handlePrefill(e: CustomEvent<{ query: string }>) {
+      if (inputRef.current) {
+        inputRef.current.value = e.detail.query
+        inputRef.current.focus()
+      }
+    }
+    window.addEventListener('askme-prefill', handlePrefill as EventListener)
+    return () => window.removeEventListener('askme-prefill', handlePrefill as EventListener)
+  }, [])
+
   const handleSearch = useCallback(() => {
     const query = inputRef.current?.value.trim()
     if (query && !limitReached) {
@@ -433,8 +445,8 @@ export function SearchModal({ isOpen, onClose, initialQuery }: SearchModalProps)
                         </div>
                         <div
                           className="flex-1 px-4 py-3 rounded-2xl rounded-bl-md bg-bg3/80 border border-brd/40
-                            search-content text-[13px] leading-[1.9] text-t2
-                            [&_p]:mb-3 [&_p]:last:mb-0
+                            search-content text-[13px] leading-[1.9] text-t2 whitespace-pre-line
+                            [&_p]:mb-3 [&_p]:last:mb-0 [&_p]:whitespace-normal
                             [&_h1]:font-display [&_h1]:text-xl [&_h1]:text-gold [&_h1]:mb-4 [&_h1]:mt-4 [&_h1]:first:mt-0 [&_h1]:pb-2 [&_h1]:border-b [&_h1]:border-gold/30
                             [&_h2]:font-display [&_h2]:text-lg [&_h2]:text-gold [&_h2]:mb-3 [&_h2]:mt-4 [&_h2]:first:mt-0 [&_h2]:pb-2 [&_h2]:border-b [&_h2]:border-brd/50
                             [&_h3]:text-[14px] [&_h3]:font-bold [&_h3]:text-gold3 [&_h3]:mt-4 [&_h3]:mb-2 [&_h3]:first:mt-0
@@ -453,7 +465,18 @@ export function SearchModal({ isOpen, onClose, initialQuery }: SearchModalProps)
                             [&_tr:hover_td]:bg-bg/30
                             [&_blockquote]:border-l-3 [&_blockquote]:border-l-gold [&_blockquote]:pl-4 [&_blockquote]:py-2 [&_blockquote]:my-4 [&_blockquote]:bg-gold/[0.05] [&_blockquote]:rounded-r-xl [&_blockquote]:text-t3
                             [&_hr]:my-4 [&_hr]:border-brd/50
-                            [&_a]:text-gold [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:text-gold3"
+                            [&_a]:text-gold [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:text-gold3
+                            [&_.tldr-section]:bg-gold/[0.08] [&_.tldr-section]:rounded-xl [&_.tldr-section]:p-4 [&_.tldr-section]:mb-4 [&_.tldr-section]:border [&_.tldr-section]:border-gold/20
+                            [&_.tldr-section_h3]:mt-0 [&_.tldr-section_h3]:mb-2 [&_.tldr-section_h3]:text-gold
+                            [&_.tldr-section_p]:mb-0 [&_.tldr-section_p]:text-[14px] [&_.tldr-section_p]:font-medium [&_.tldr-section_p]:text-t1
+                            [&_.takeaways-section]:bg-accent-green/[0.06] [&_.takeaways-section]:rounded-xl [&_.takeaways-section]:p-4 [&_.takeaways-section]:mb-4 [&_.takeaways-section]:border [&_.takeaways-section]:border-accent-green/20
+                            [&_.takeaways-section_h3]:mt-0 [&_.takeaways-section_h3]:mb-2 [&_.takeaways-section_h3]:text-accent-green
+                            [&_.takeaways-section_ul]:my-0 [&_.takeaways-section_ul]:space-y-1.5
+                            [&_.takeaways-section_li]:text-t1
+                            [&_.followup-section]:bg-accent-blue/[0.06] [&_.followup-section]:rounded-xl [&_.followup-section]:p-4 [&_.followup-section]:mt-4 [&_.followup-section]:border [&_.followup-section]:border-accent-blue/20
+                            [&_.followup-section_h3]:mt-0 [&_.followup-section_h3]:mb-2 [&_.followup-section_h3]:text-accent-blue
+                            [&_.followup-section_ul]:my-0 [&_.followup-section_ul]:space-y-1.5 [&_.followup-section_ul]:list-none [&_.followup-section_ul]:pl-0
+                            [&_.followup-section_li]:text-t2 [&_.followup-section_li]:cursor-pointer [&_.followup-section_li]:hover:text-accent-blue [&_.followup-section_li]:transition-colors [&_.followup-section_li:before]:content-['→_'] [&_.followup-section_li:before]:text-accent-blue/50"
                           dangerouslySetInnerHTML={{ __html: message.content }}
                         />
                       </div>
@@ -470,8 +493,8 @@ export function SearchModal({ isOpen, onClose, initialQuery }: SearchModalProps)
                       </div>
                       <div
                         className="flex-1 px-4 py-3 rounded-2xl rounded-bl-md bg-bg3/80 border border-brd/40
-                          search-content text-[13px] leading-[1.9] text-t2
-                          [&_p]:mb-3 [&_p]:last:mb-0
+                          search-content text-[13px] leading-[1.9] text-t2 whitespace-pre-line
+                          [&_p]:mb-3 [&_p]:last:mb-0 [&_p]:whitespace-normal
                           [&_h1]:font-display [&_h1]:text-xl [&_h1]:text-gold [&_h1]:mb-4 [&_h1]:mt-4 [&_h1]:first:mt-0 [&_h1]:pb-2 [&_h1]:border-b [&_h1]:border-gold/30
                           [&_h2]:font-display [&_h2]:text-lg [&_h2]:text-gold [&_h2]:mb-3 [&_h2]:mt-4 [&_h2]:first:mt-0 [&_h2]:pb-2 [&_h2]:border-b [&_h2]:border-brd/50
                           [&_h3]:text-[14px] [&_h3]:font-bold [&_h3]:text-gold3 [&_h3]:mt-4 [&_h3]:mb-2 [&_h3]:first:mt-0
@@ -490,7 +513,18 @@ export function SearchModal({ isOpen, onClose, initialQuery }: SearchModalProps)
                           [&_tr:hover_td]:bg-bg/30
                           [&_blockquote]:border-l-3 [&_blockquote]:border-l-gold [&_blockquote]:pl-4 [&_blockquote]:py-2 [&_blockquote]:my-4 [&_blockquote]:bg-gold/[0.05] [&_blockquote]:rounded-r-xl [&_blockquote]:text-t3
                           [&_hr]:my-4 [&_hr]:border-brd/50
-                          [&_a]:text-gold [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:text-gold3"
+                          [&_a]:text-gold [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:text-gold3
+                          [&_.tldr-section]:bg-gold/[0.08] [&_.tldr-section]:rounded-xl [&_.tldr-section]:p-4 [&_.tldr-section]:mb-4 [&_.tldr-section]:border [&_.tldr-section]:border-gold/20
+                          [&_.tldr-section_h3]:mt-0 [&_.tldr-section_h3]:mb-2 [&_.tldr-section_h3]:text-gold
+                          [&_.tldr-section_p]:mb-0 [&_.tldr-section_p]:text-[14px] [&_.tldr-section_p]:font-medium [&_.tldr-section_p]:text-t1
+                          [&_.takeaways-section]:bg-accent-green/[0.06] [&_.takeaways-section]:rounded-xl [&_.takeaways-section]:p-4 [&_.takeaways-section]:mb-4 [&_.takeaways-section]:border [&_.takeaways-section]:border-accent-green/20
+                          [&_.takeaways-section_h3]:mt-0 [&_.takeaways-section_h3]:mb-2 [&_.takeaways-section_h3]:text-accent-green
+                          [&_.takeaways-section_ul]:my-0 [&_.takeaways-section_ul]:space-y-1.5
+                          [&_.takeaways-section_li]:text-t1
+                          [&_.followup-section]:bg-accent-blue/[0.06] [&_.followup-section]:rounded-xl [&_.followup-section]:p-4 [&_.followup-section]:mt-4 [&_.followup-section]:border [&_.followup-section]:border-accent-blue/20
+                          [&_.followup-section_h3]:mt-0 [&_.followup-section_h3]:mb-2 [&_.followup-section_h3]:text-accent-blue
+                          [&_.followup-section_ul]:my-0 [&_.followup-section_ul]:space-y-1.5 [&_.followup-section_ul]:list-none [&_.followup-section_ul]:pl-0
+                          [&_.followup-section_li]:text-t2 [&_.followup-section_li]:cursor-pointer [&_.followup-section_li]:hover:text-accent-blue [&_.followup-section_li]:transition-colors [&_.followup-section_li:before]:content-['→_'] [&_.followup-section_li:before]:text-accent-blue/50"
                         dangerouslySetInnerHTML={{ __html: streamingContent }}
                       />
                     </div>

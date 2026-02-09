@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { SectionTitle } from '@/components/ui/SectionTitle'
+import { ContextHeader } from '@/components/ui/ContextHeader'
 import { PoliticalSystem } from '@/components/overview/PoliticalSystem'
 import { EmiratesCards } from '@/components/overview/EmiratesCards'
 import { AbuDhabiVsDubai } from '@/components/overview/AbuDhabiVsDubai'
@@ -30,8 +30,6 @@ import { politicalTrends as trendsKo } from '@/data/politics/trends'
 import { politicalTrends as trendsEn } from '@/data/politics/trends.en'
 import { useLocale } from '@/hooks/useLocale'
 import { useLocalizedData } from '@/hooks/useLocalizedData'
-import { SectionHeader } from '@/components/ui/SectionHeader'
-
 const SECTION_CONTENT = {
   ko: {
     tldr: [
@@ -43,6 +41,12 @@ const SECTION_CONTENT = {
       '왕족/정부 연결이 사업 성패 좌우 - 로열 커넥션 필수',
       'AI/에너지/부동산 국책사업 참여 기회 - Mubadala/ADQ 등 SWF 접점 확보 중요',
     ],
+    quickQuestions: [
+      { label: 'MBZ 권력구조', query: 'MBZ의 권력 기반과 주요 측근은 누구인가요?' },
+      { label: 'Tahnoun 영향력', query: 'Tahnoun bin Zayed의 사업 영역과 영향력은?' },
+      { label: '왕족 비즈니스', query: 'UAE 왕족과 비즈니스 관계를 맺으려면 어떻게 해야 하나요?' },
+      { label: '한국-UAE 외교', query: '한국과 UAE의 외교 관계 현황과 협력 분야는?' },
+    ],
   },
   en: {
     tldr: [
@@ -53,6 +57,12 @@ const SECTION_CONTENT = {
     investorImplications: [
       'Royal/government connections are key to business success - cultivate relationships',
       'Opportunities in AI/energy/real estate national projects - SWF access (Mubadala/ADQ) is critical',
+    ],
+    quickQuestions: [
+      { label: 'MBZ Power', query: 'What is MBZ\'s power base and who are his key allies?' },
+      { label: 'Tahnoun Influence', query: 'What is Tahnoun bin Zayed\'s business empire and influence?' },
+      { label: 'Royal Connections', query: 'How can foreign businesses build relationships with UAE royals?' },
+      { label: 'Korea-UAE', query: 'What is the current state of Korea-UAE diplomatic relations?' },
     ],
   },
 }
@@ -183,14 +193,12 @@ export default function PoliticsPage() {
 
   return (
     <>
-      <SectionTitle
+      <ContextHeader
         title={p.title}
         subtitle={p.subtitle}
-      />
-
-      <SectionHeader
         tldr={content.tldr}
         investorImplications={content.investorImplications}
+        quickQuestions={content.quickQuestions}
         source={{ sourceName: 'Dashboard Analysis', asOf: '2025-02', method: 'aggregated' }}
         locale={locale}
       />

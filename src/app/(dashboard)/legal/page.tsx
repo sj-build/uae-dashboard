@@ -1,14 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { SectionTitle } from '@/components/ui/SectionTitle'
+import { ContextHeader } from '@/components/ui/ContextHeader'
 import { LegalFramework } from '@/components/legal/LegalFramework'
 import { BusinessRegulations } from '@/components/legal/BusinessRegulations'
 import { FreeZones } from '@/components/legal/FreeZones'
 import { RecentLegalChanges } from '@/components/legal/RecentLegalChanges'
 import { useLocale } from '@/hooks/useLocale'
-import { SectionHeader } from '@/components/ui/SectionHeader'
-
 const SECTION_CONTENT = {
   ko: {
     tldr: [
@@ -20,6 +18,12 @@ const SECTION_CONTENT = {
       '프리존 vs 메인랜드 선택이 세금/규제/라이센스에 큰 영향 - 전문가 자문 권장',
       '에미라티화 비용 고려 필수 - 불이행시 벌금, 비자 제한 등 불이익',
     ],
+    quickQuestions: [
+      { label: '프리존 vs 메인랜드', query: 'UAE 프리존과 메인랜드의 차이점과 장단점은?' },
+      { label: 'ADGM/DIFC 비교', query: 'ADGM과 DIFC 금융 프리존의 특징과 차이는?' },
+      { label: '법인 설립', query: 'UAE에서 외국인이 법인을 설립하는 절차와 비용은?' },
+      { label: '에미라티화 규정', query: '에미라티화 정책의 최신 규정과 준수 방법은?' },
+    ],
   },
   en: {
     tldr: [
@@ -30,6 +34,12 @@ const SECTION_CONTENT = {
     investorImplications: [
       'Free zone vs Mainland choice significantly impacts taxes/regulations/licensing - expert advice recommended',
       'Factor in Emiratization costs - non-compliance leads to fines and visa restrictions',
+    ],
+    quickQuestions: [
+      { label: 'Free Zone vs Mainland', query: 'What are differences between UAE free zones and mainland?' },
+      { label: 'ADGM vs DIFC', query: 'What are the features and differences of ADGM and DIFC?' },
+      { label: 'Company Setup', query: 'What is the process and cost to set up a company in UAE as a foreigner?' },
+      { label: 'Emiratization Rules', query: 'What are latest Emiratization regulations and compliance requirements?' },
     ],
   },
 }
@@ -72,14 +82,12 @@ export default function LegalPage() {
 
   return (
     <>
-      <SectionTitle
+      <ContextHeader
         title={p.title}
         subtitle={p.subtitle}
-      />
-
-      <SectionHeader
         tldr={content.tldr}
         investorImplications={content.investorImplications}
+        quickQuestions={content.quickQuestions}
         source={{ sourceName: 'UAE Gov, ADGM, DIFC', asOf: '2025-01', method: 'official' }}
         locale={locale}
       />

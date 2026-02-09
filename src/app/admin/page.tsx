@@ -75,6 +75,12 @@ export default function AdminDashboardPage() {
           >
             Ask Me AI Settings
           </Link>
+          <Link
+            href="/admin/eval"
+            className="px-4 py-2.5 rounded-lg text-xs font-semibold bg-accent-orange/10 text-accent-orange border border-accent-orange/20 hover:bg-accent-orange/20 hover:border-accent-orange/35 transition-all duration-200"
+          >
+            Eval Agent
+          </Link>
           <button
             onClick={triggerCrawl}
             className="px-4 py-2.5 rounded-lg text-xs font-semibold bg-accent-cyan/10 text-accent-cyan border border-accent-cyan/20 hover:bg-accent-cyan/20 hover:border-accent-cyan/35 transition-all duration-200"

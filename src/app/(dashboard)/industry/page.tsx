@@ -1,7 +1,6 @@
 'use client'
 
-import { SectionTitle } from '@/components/ui/SectionTitle'
-import { SectionHeader } from '@/components/ui/SectionHeader'
+import { ContextHeader } from '@/components/ui/ContextHeader'
 import { SectorGrid } from '@/components/industry/SectorGrid'
 import { sectors as sectorsKo } from '@/data/industry/sectors'
 import { sectors as sectorsEn } from '@/data/industry/sectors.en'
@@ -19,6 +18,12 @@ const SECTION_CONTENT = {
       'IHC/Mubadala/ADIA 지분구조 파악 필수 - 대부분 핵심 산업이 국부펀드 연결',
       '섹터별 라이선스/규제 상이 - 프리존 vs 메인랜드 선택이 진입전략 결정',
     ],
+    quickQuestions: [
+      { label: 'G42 현황', query: 'G42의 사업 영역과 주요 파트너십 현황은?' },
+      { label: 'AI 투자기회', query: 'UAE AI/데이터센터 산업에서 투자 기회는?' },
+      { label: '크립토 규제', query: 'UAE 가상자산 규제와 라이선스 취득 방법은?' },
+      { label: '한국 기업 진출', query: '한국 기업이 UAE 산업에 진출한 사례와 기회는?' },
+    ],
   },
   en: {
     tldr: [
@@ -29,6 +34,12 @@ const SECTION_CONTENT = {
     investorImplications: [
       'Understanding IHC/Mubadala/ADIA ownership structure essential - most key industries connected to sovereign wealth',
       'Licensing/regulations differ by sector - Free Zone vs Mainland choice determines entry strategy',
+    ],
+    quickQuestions: [
+      { label: 'G42 Overview', query: 'What are G42\'s business areas and key partnerships?' },
+      { label: 'AI Opportunities', query: 'What investment opportunities exist in UAE AI/data center industry?' },
+      { label: 'Crypto Regulation', query: 'What are UAE\'s crypto regulations and how to get licensed?' },
+      { label: 'Korean Companies', query: 'What Korean companies have entered UAE industries and what opportunities exist?' },
     ],
   },
 }
@@ -41,14 +52,12 @@ export default function IndustryPage() {
 
   return (
     <>
-      <SectionTitle
+      <ContextHeader
         title={p.title}
         subtitle={p.subtitle}
-      />
-
-      <SectionHeader
         tldr={content.tldr}
         investorImplications={content.investorImplications}
+        quickQuestions={content.quickQuestions}
         source={{ sourceName: 'Statista, Mordor Intelligence, UAE Gov', asOf: '2024-12', method: 'official' }}
         locale={locale}
       />

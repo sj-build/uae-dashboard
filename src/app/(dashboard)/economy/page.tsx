@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { SectionTitle } from '@/components/ui/SectionTitle'
+import { ContextHeader } from '@/components/ui/ContextHeader'
 import { EconomicTrends } from '@/components/economy/EconomicTrends'
 import { EconomyOverview } from '@/components/economy/EconomyOverview'
 import { EconomyStructureDetailed } from '@/components/economy/EconomyStructureDetailed'
@@ -14,8 +14,6 @@ import { MacroRiskSummary } from '@/components/overview/MacroRiskSummary'
 import { useLocale } from '@/hooks/useLocale'
 import { economicTrends } from '@/data/economy/trends'
 import { economicTrends as economicTrendsEn } from '@/data/economy/trends.en'
-import { SectionHeader } from '@/components/ui/SectionHeader'
-
 const SECTION_CONTENT = {
   ko: {
     tldr: [
@@ -27,6 +25,12 @@ const SECTION_CONTENT = {
       '고소득 시장으로 프리미엄 가격 책정 가능 - B2C 진출 기회',
       'SWF는 스타트업 투자부터 대형 M&A까지 - LP 접점 확보가 핵심',
     ],
+    quickQuestions: [
+      { label: 'SWF 투자전략', query: 'UAE 국부펀드들의 최근 투자 트렌드와 주요 투자 섹터는?' },
+      { label: 'Mubadala 현황', query: 'Mubadala의 주요 포트폴리오와 투자 성향은?' },
+      { label: '경제 다각화', query: 'UAE의 비석유 경제 다각화 현황과 유망 분야는?' },
+      { label: '한국 기업 기회', query: '한국 기업이 UAE 경제에서 진출할 수 있는 기회는?' },
+    ],
   },
   en: {
     tldr: [
@@ -37,6 +41,12 @@ const SECTION_CONTENT = {
     investorImplications: [
       'High-income market enables premium pricing - B2C entry opportunities',
       'SWFs span from startup investments to major M&A - securing LP access is key',
+    ],
+    quickQuestions: [
+      { label: 'SWF Strategy', query: 'What are UAE sovereign wealth funds\' recent investment trends and key sectors?' },
+      { label: 'Mubadala', query: 'What is Mubadala\'s portfolio and investment focus?' },
+      { label: 'Diversification', query: 'What is the status of UAE\'s non-oil economic diversification?' },
+      { label: 'Korean Entry', query: 'What opportunities exist for Korean companies in UAE economy?' },
     ],
   },
 }
@@ -96,14 +106,12 @@ export default function EconomyPage() {
 
   return (
     <>
-      <SectionTitle
+      <ContextHeader
         title={p.title}
         subtitle={p.subtitle}
-      />
-
-      <SectionHeader
         tldr={content.tldr}
         investorImplications={content.investorImplications}
+        quickQuestions={content.quickQuestions}
         source={{ sourceName: 'IMF, World Bank, SWF Institute', asOf: '2024', method: 'aggregated' }}
         locale={locale}
       />

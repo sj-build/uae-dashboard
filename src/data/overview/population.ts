@@ -9,13 +9,13 @@ export interface PopulationGroup {
 
 export const populationGroups: readonly PopulationGroup[] = [
   { flag: '🇮🇳', label: '인도', percentage: 38, count: '~400만', color: 'linear-gradient(90deg,#f59e0b,#d97706)' },
-  { flag: '🇵🇰', label: '파키스탄', percentage: 17, count: '~175만', color: 'linear-gradient(90deg,#34d399,#059669)' },
-  { flag: '🇦🇪', label: '에미라티', percentage: 11.5, count: '~131만', color: 'linear-gradient(90deg,#c8a44e,#e8c85a)', bold: true },
-  { flag: '🇧🇩', label: '방글라데시', percentage: 7, count: '~75만', color: '#22d3ee' },
-  { flag: '🇵🇭', label: '필리핀', percentage: 5, count: '~55만', color: '#a78bfa' },
-  { flag: '🇪🇬', label: '이집트+아랍', percentage: 8, count: '~90만', color: '#ef4444' },
-  { flag: '🌍', label: '서양인', percentage: 5, count: '~55만', color: '#4b5563' },
-  { flag: '🇰🇷', label: '한국', percentage: 0.3, count: '~1.2만', color: '#4a9eff' },
+  { flag: '🇵🇰', label: '파키스탄', percentage: 17, count: '~178만', color: 'linear-gradient(90deg,#34d399,#059669)' },
+  { flag: '🇦🇪', label: '에미라티', percentage: 11.5, count: '~121만', color: 'linear-gradient(90deg,#c8a44e,#e8c85a)', bold: true },
+  { flag: '🇧🇩', label: '방글라데시', percentage: 7, count: '~74만', color: '#22d3ee' },
+  { flag: '🇵🇭', label: '필리핀', percentage: 5, count: '~53만', color: '#a78bfa' },
+  { flag: '🇪🇬', label: '이집트+아랍', percentage: 8, count: '~84만', color: '#ef4444' },
+  { flag: '🌍', label: '기타 외국인', percentage: 13.2, count: '~139만', color: '#4b5563' },
+  { flag: '🇰🇷', label: '한국', percentage: 0.1, count: '~1.2만', color: '#4a9eff' },
 ] as const
 
 export interface AgeGroup {

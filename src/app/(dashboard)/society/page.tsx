@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { SectionTitle } from '@/components/ui/SectionTitle'
+import { ContextHeader } from '@/components/ui/ContextHeader'
 import { PopulationStructure } from '@/components/society/PopulationStructure'
 import { BusinessCulture } from '@/components/society/BusinessCulture'
 import { ReligionSection } from '@/components/society/ReligionSection'
@@ -11,8 +11,6 @@ import { CulturalInfraGaming } from '@/components/society/CulturalInfraGaming'
 import { GenZKWave } from '@/components/society/GenZKWave'
 import { WelfareWomenFood } from '@/components/society/WelfareWomenFood'
 import { useLocale } from '@/hooks/useLocale'
-import { SectionHeader } from '@/components/ui/SectionHeader'
-
 const SECTION_CONTENT = {
   ko: {
     tldr: [
@@ -24,6 +22,12 @@ const SECTION_CONTENT = {
       '관광/엔터테인먼트 규제 완화로 F&B/호스피탈리티/게이밍 진출 기회 확대',
       '한류 열풍으로 K-콘텐츠/K-Beauty 현지 사업 유망 - 할랄 인증 필수',
     ],
+    quickQuestions: [
+      { label: 'K-Wave 현황', query: 'UAE에서 한류(K-Pop, K-Beauty) 인기와 사업 기회는?' },
+      { label: '에미라티화', query: '에미라티화 정책이 외국 기업에 미치는 영향은?' },
+      { label: '카지노/게이밍', query: 'UAE 카지노 합법화 현황과 사업 기회는?' },
+      { label: '비즈니스 문화', query: 'UAE에서 비즈니스할 때 알아야 할 문화적 특성은?' },
+    ],
   },
   en: {
     tldr: [
@@ -34,6 +38,12 @@ const SECTION_CONTENT = {
     investorImplications: [
       'Tourism/entertainment deregulation expands F&B/hospitality/gaming opportunities',
       'K-Wave opens doors for K-content/K-Beauty local ventures - Halal certification essential',
+    ],
+    quickQuestions: [
+      { label: 'K-Wave Status', query: 'What is the popularity of K-Pop and K-Beauty in UAE and business opportunities?' },
+      { label: 'Emiratization', query: 'How does Emiratization policy affect foreign companies?' },
+      { label: 'Casino/Gaming', query: 'What is the status of UAE casino legalization and opportunities?' },
+      { label: 'Business Culture', query: 'What cultural aspects should I know when doing business in UAE?' },
     ],
   },
 }
@@ -88,14 +98,12 @@ export default function SocietyPage() {
 
   return (
     <>
-      <SectionTitle
+      <ContextHeader
         title={p.title}
         subtitle={p.subtitle}
-      />
-
-      <SectionHeader
         tldr={content.tldr}
         investorImplications={content.investorImplications}
+        quickQuestions={content.quickQuestions}
         source={{ sourceName: 'UAE Statistics, Media Reports', asOf: '2025-02', method: 'aggregated' }}
         locale={locale}
       />
