@@ -11,6 +11,7 @@ import {
   buildAttribution,
 } from '@/lib/unsplash'
 import type { UnsplashPhoto } from '@/lib/unsplash'
+import { getSupabaseAdmin } from '@/lib/supabase'
 import { NEIGHBORHOOD_QUERIES } from '@/data/neighborhood-queries'
 
 export interface RefreshInput {
@@ -35,15 +36,6 @@ export interface RefreshResult {
     is_active: boolean
   }>
   readonly error?: string
-}
-
-function getSupabaseAdmin() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!url || !key) throw new Error('Supabase not configured')
-
-  const { createClient } = require('@supabase/supabase-js')
-  return createClient(url, key, { auth: { persistSession: false } })
 }
 
 export async function refreshNeighborhoodImages(input: RefreshInput): Promise<RefreshResult> {
