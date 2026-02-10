@@ -52,7 +52,16 @@ export async function POST(request: Request): Promise<NextResponse> {
   let runId: number | null = null
 
   try {
-    const body = await request.json()
+    let body: unknown
+    try {
+      body = await request.json()
+    } catch {
+      return NextResponse.json(
+        { success: false, error: 'Invalid JSON body' },
+        { status: 400 },
+      )
+    }
+
     const parsed = RequestSchema.safeParse(body)
     if (!parsed.success) {
       return NextResponse.json(
@@ -68,7 +77,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     runId = await startIngestionRun('naver', queries)
 
     // Fetch from Naver
-    const items = await searchNaverNews(queries, { display })
+    const { items, queryErrors } = await searchNaverNews(queries, { display })
 
     // Save to DB
     const result = await saveNewsItems(items, {
@@ -77,7 +86,8 @@ export async function POST(request: Request): Promise<NextResponse> {
     })
 
     const duration_ms = Date.now() - startTime
-    const status = result.errors > 0
+    const totalErrors = result.errors + queryErrors.length
+    const status = totalErrors > 0
       ? (result.saved > 0 ? 'partial' : 'failed')
       : 'success'
 
@@ -87,8 +97,9 @@ export async function POST(request: Request): Promise<NextResponse> {
       fetched: items.length,
       saved: result.saved,
       skipped: result.skipped,
-      errors: result.errors,
+      errors: totalErrors,
       duration_ms,
+      meta: queryErrors.length > 0 ? { query_errors: queryErrors } : undefined,
     })
 
     return NextResponse.json({
@@ -97,10 +108,11 @@ export async function POST(request: Request): Promise<NextResponse> {
       fetched: items.length,
       saved: result.saved,
       skipped: result.skipped,
-      errors: result.errors,
+      errors: totalErrors,
       documents_synced: result.documentsSynced,
       duration_ms,
       queries_used: queries.length,
+      ...(queryErrors.length > 0 ? { query_errors: queryErrors.length } : {}),
     })
   } catch (error) {
     const duration_ms = Date.now() - startTime

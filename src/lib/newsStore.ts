@@ -42,66 +42,67 @@ export async function saveNewsItems(
   items: readonly NaverNewsItem[],
   options?: { category?: string; syncToDocuments?: boolean },
 ): Promise<SaveResult> {
+  if (items.length === 0) {
+    return { saved: 0, skipped: 0, errors: 0, documentsSynced: 0 }
+  }
+
   const supabase = getSupabaseAdmin()
   const { category, syncToDocuments = true } = options ?? {}
 
-  let saved = 0
-  let skipped = 0
+  // Build rows for batch upsert
+  const rows = items.map(item => ({
+    provider: item.provider,
+    url: item.url,
+    title: item.title,
+    summary: item.summary || null,
+    published_at: item.published_at,
+    publisher: item.publisher,
+    language: 'ko',
+    category: category ?? null,
+    tags: [] as string[],
+    content_hash: item.content_hash,
+    meta: item.meta,
+    fulltext_status: 'none',
+  }))
+
+  // Batch upsert — ignoreDuplicates skips existing rows silently
+  const { data: inserted, error } = await supabase
+    .from('news_items')
+    .upsert(rows, { onConflict: 'content_hash', ignoreDuplicates: true })
+    .select('content_hash')
+
+  let saved: number
   let errors = 0
+
+  if (error) {
+    // Entire batch failed
+    return { saved: 0, skipped: 0, errors: items.length, documentsSynced: 0 }
+  }
+
+  // inserted contains only newly saved rows (duplicates are skipped)
+  const savedHashes = new Set((inserted ?? []).map(r => r.content_hash as string))
+  saved = savedHashes.size
+  const skipped = items.length - saved
+
+  // Sync saved items to documents table for RAG
   let documentsSynced = 0
-
-  for (const item of items) {
-    try {
-      const row = {
-        provider: item.provider,
-        url: item.url,
-        title: item.title,
-        summary: item.summary || null,
-        published_at: item.published_at,
-        publisher: item.publisher,
-        language: 'ko',
-        category: category ?? null,
-        tags: [] as string[],
-        content_hash: item.content_hash,
-        meta: item.meta,
-        fulltext_status: 'none',
+  if (syncToDocuments && saved > 0) {
+    const savedItems = items.filter(item => savedHashes.has(item.content_hash))
+    for (const item of savedItems) {
+      try {
+        await upsertDocumentFromNews({
+          title: item.title,
+          url: item.url,
+          summary: item.summary || null,
+          publisher: item.publisher,
+          published_at: item.published_at,
+          tags: [],
+          category,
+        })
+        documentsSynced++
+      } catch {
+        errors++
       }
-
-      const { error } = await supabase
-        .from('news_items')
-        .upsert(row, { onConflict: 'content_hash', ignoreDuplicates: true })
-
-      if (error) {
-        // Duplicate key = already exists = skip
-        if (error.code === '23505') {
-          skipped++
-        } else {
-          errors++
-        }
-        continue
-      }
-
-      saved++
-
-      // Sync to documents table for RAG
-      if (syncToDocuments) {
-        try {
-          await upsertDocumentFromNews({
-            title: item.title,
-            url: item.url,
-            summary: item.summary || null,
-            publisher: item.publisher,
-            published_at: item.published_at,
-            tags: [],
-            category,
-          })
-          documentsSynced++
-        } catch {
-          // Document sync failure doesn't block news_items save
-        }
-      }
-    } catch {
-      errors++
     }
   }
 

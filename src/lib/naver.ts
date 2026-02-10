@@ -37,6 +37,11 @@ export interface NaverNewsItem {
   }
 }
 
+export interface NaverSearchResult {
+  readonly items: readonly NaverNewsItem[]
+  readonly queryErrors: readonly { query: string; error: string }[]
+}
+
 // ---------------------------------------------------------------------------
 // HTML stripping
 // ---------------------------------------------------------------------------
@@ -45,11 +50,13 @@ function stripHtml(html: string): string {
   return html
     .replace(/<[^>]*>/g, '')
     .replace(/&quot;/g, '"')
-    .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&apos;/g, "'")
-    .replace(/&#\d+;/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(parseInt(dec, 10)))
+    .replace(/&amp;/g, '&')
     .trim()
 }
 
@@ -150,7 +157,7 @@ export async function searchNaverNews(
     display?: number
     sort?: 'date' | 'sim'
   },
-): Promise<readonly NaverNewsItem[]> {
+): Promise<NaverSearchResult> {
   const clientId = process.env.NAVER_CLIENT_ID
   const clientSecret = process.env.NAVER_CLIENT_SECRET
 
@@ -160,9 +167,11 @@ export async function searchNaverNews(
 
   const { display = 10, sort = 'date' } = options ?? {}
   const allItems: NaverNewsItem[] = []
+  const queryErrors: Array<{ query: string; error: string }> = []
   const seenHashes = new Set<string>()
 
-  for (const query of queries) {
+  for (let i = 0; i < queries.length; i++) {
+    const query = queries[i]
     try {
       const rawItems = await fetchNaverQuery(query, clientId, clientSecret, display, sort)
 
@@ -192,15 +201,18 @@ export async function searchNaverNews(
           },
         })
       }
-    } catch {
-      // Individual query failure doesn't stop the batch
+    } catch (err) {
+      queryErrors.push({
+        query,
+        error: err instanceof Error ? err.message : 'Unknown error',
+      })
     }
 
     // Rate limiting between queries
-    if (queries.indexOf(query) < queries.length - 1) {
+    if (i < queries.length - 1) {
       await new Promise(resolve => setTimeout(resolve, INTER_QUERY_DELAY_MS))
     }
   }
 
-  return allItems
+  return { items: allItems, queryErrors }
 }

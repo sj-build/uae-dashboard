@@ -23,7 +23,7 @@ create table if not exists news_items (
 
 create index if not exists idx_news_items_provider on news_items(provider);
 create index if not exists idx_news_items_published on news_items(published_at desc);
-create index if not exists idx_news_items_hash on news_items(content_hash);
+-- content_hash already has a unique index from the unique constraint
 create index if not exists idx_news_items_fulltext_status on news_items(fulltext_status);
 
 -- ingestion_runs: log each ingestion run for debugging
