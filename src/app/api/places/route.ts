@@ -40,6 +40,24 @@ export async function GET(request: Request): Promise<NextResponse> {
 
     let items = data ?? []
 
+    // Attach active hero images from neighborhood_images
+    const slugs = items.map(p => p.slug)
+    if (slugs.length > 0) {
+      const { data: images } = await supabase
+        .from('neighborhood_images')
+        .select('neighborhood_slug, public_url, photographer, photographer_url, source_url, attribution_text')
+        .in('neighborhood_slug', slugs)
+        .eq('is_active', true)
+
+      if (images && images.length > 0) {
+        const imageMap = new Map(images.map(img => [img.neighborhood_slug, img]))
+        items = items.map(place => {
+          const img = imageMap.get(place.slug)
+          return img ? { ...place, hero_image: img } : place
+        })
+      }
+    }
+
     // Server-side search would be ideal, but with <100 places, client-side is acceptable
     if (q) {
       const lower = q.toLowerCase()

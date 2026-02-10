@@ -4,6 +4,14 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useLocale } from '@/hooks/useLocale'
 
 // ─── Types ───────────────────────────────────────────────
+interface HeroImage {
+  public_url: string
+  photographer?: string
+  photographer_url?: string
+  source_url?: string
+  attribution_text?: string
+}
+
 interface Place {
   id: string
   slug: string
@@ -20,6 +28,7 @@ interface Place {
   as_of: string | null
   confidence: number
   links: Array<{ title: string; url: string; source_type: string }>
+  hero_image?: HeroImage
 }
 
 interface PlaceDetail extends Place {
@@ -159,7 +168,8 @@ function PlaceDetailPanel({
   if (!place) return null
 
   const fz = place.free_zone
-  const heroImage = PLACE_IMAGES[place.slug]
+  const heroImage = place.hero_image?.public_url ?? PLACE_IMAGES[place.slug]
+  const heroAttribution = place.hero_image
 
   return (
     <div className="fixed inset-0 z-50 bg-bg/60 backdrop-blur-sm flex items-start justify-end" onClick={onClose}>
@@ -177,6 +187,17 @@ function PlaceDetailPanel({
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-bg2 via-bg2/30 to-transparent" />
+            {heroAttribution?.photographer && (
+              <a
+                href={heroAttribution.source_url ?? '#'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="absolute bottom-2 left-3 text-[9px] text-white/50 hover:text-white/80 transition-colors"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {heroAttribution.attribution_text ?? `Photo: ${heroAttribution.photographer}`}
+              </a>
+            )}
             <button
               onClick={onClose}
               className="absolute top-3 right-3 w-8 h-8 rounded-full bg-bg/70 backdrop-blur-sm text-t2 hover:text-t1 flex items-center justify-center text-sm"
@@ -372,7 +393,7 @@ function PlaceCard({
   const fz = place.free_zone
   const hasFreeZone = fz?.is_free_zone
   const isKo = locale === 'ko'
-  const heroImage = PLACE_IMAGES[place.slug]
+  const heroImage = place.hero_image?.public_url ?? PLACE_IMAGES[place.slug]
   const bestForLabel = (bf: string) => BEST_FOR_LABELS[bf]?.[locale] ?? bf
 
   return (
