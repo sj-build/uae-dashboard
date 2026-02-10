@@ -79,6 +79,29 @@ const PUBLISHER_COLORS: Record<string, string> = {
 
 const DEFAULT_BADGE_STYLE = 'bg-t4/15 text-t3 border-t4/20'
 
+// Tags to hide from display
+const HIDDEN_TAG_PREFIXES = ['lane:'] as const
+const HIDDEN_TAG_EXACT = ['deal', 'macro'] as const
+
+// Tags that deserve visual emphasis (deal-signal keywords)
+const HIGHLIGHT_TAG_PATTERNS = [
+  'K뷰티', 'K-beauty', 'K팝', 'K-pop', 'K-food', 'K-푸드',
+  'AI', 'G42', 'Mubadala', 'ADIA', 'ADQ', 'Hub71', 'ADGM',
+  '스타트업', 'startup', 'MOU', 'JV', '합작', '런칭', 'launch',
+  '투자', 'investment', '협력', 'partnership',
+] as const
+
+function shouldShowTag(tag: string): boolean {
+  if (HIDDEN_TAG_PREFIXES.some((p) => tag.startsWith(p))) return false
+  if (HIDDEN_TAG_EXACT.some((h) => tag.toLowerCase() === h)) return false
+  return true
+}
+
+function isHighlightTag(tag: string): boolean {
+  const lower = tag.toLowerCase()
+  return HIGHLIGHT_TAG_PATTERNS.some((p) => lower.includes(p.toLowerCase()))
+}
+
 function getPublisherBadgeStyle(publisher: string): string {
   return PUBLISHER_COLORS[publisher] ?? DEFAULT_BADGE_STYLE
 }
@@ -159,18 +182,20 @@ function NewsCard({ item, p, locale, highlight }: NewsCardProps) {
       }`}
     >
       <div className="flex items-start gap-3">
-        <span className="shrink-0 flex flex-col items-start gap-1.5">
+        <div className="shrink-0 flex flex-col items-start gap-1.5">
+          {item.source === 'naver' && (
+            <span className="px-1 py-px rounded text-[8px] font-medium text-t4/60 bg-bg2 border border-brd/50">
+              KR
+            </span>
+          )}
           <span
-            className={`px-1.5 py-0.5 rounded text-[9px] font-bold border ${item.source === 'naver' ? 'bg-accent-green/15 text-accent-green border-accent-green/20' : 'bg-accent-blue/15 text-accent-blue border-accent-blue/20'}`}
-          >
-            {item.source === 'naver' ? 'KR' : 'EN'}
-          </span>
-          <span
-            className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${getPublisherBadgeStyle(item.publisher)} ${isMajor ? 'ring-1 ring-gold/30' : ''}`}
+            className={`px-2 py-0.5 rounded font-semibold border ${getPublisherBadgeStyle(item.publisher)} ${isMajor ? 'ring-1 ring-gold/30' : ''} ${
+              item.publisher === 'Naver News' ? 'text-[9px] text-t4/70' : 'text-[10px]'
+            }`}
           >
             {item.publisher}
           </span>
-        </span>
+        </div>
 
         <div className="flex-1 min-w-0">
           <h3 className={`text-[14px] font-semibold leading-snug group-hover:text-gold transition-colors duration-150 line-clamp-2 mb-2 ${highlight ? 'text-gold' : 'text-t1'}`}>
@@ -188,14 +213,18 @@ function NewsCard({ item, p, locale, highlight }: NewsCardProps) {
               {formatRelativeDate(item.publishedAt, p, locale)}
             </span>
 
-            {item.tags.length > 0 && (
+            {item.tags.filter(shouldShowTag).length > 0 && (
               <div className="flex items-center gap-1 flex-wrap">
-                {item.tags.slice(0, 3).map((tag) => (
+                {item.tags.filter(shouldShowTag).slice(0, 3).map((tag) => (
                   <span
                     key={tag}
-                    className="px-1.5 py-0.5 rounded text-[9px] text-t4 bg-bg2 border border-brd"
+                    className={`px-1.5 py-0.5 rounded text-[9px] border ${
+                      isHighlightTag(tag)
+                        ? 'bg-gold/10 text-gold border-gold/25 font-semibold'
+                        : 'text-t4 bg-bg2 border-brd'
+                    }`}
                   >
-                    {tag.includes(':') ? tag.split(':')[1] : tag}
+                    {tag}
                   </span>
                 ))}
               </div>

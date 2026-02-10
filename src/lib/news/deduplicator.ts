@@ -44,7 +44,7 @@ function jaccardSimilarity(setA: ReadonlySet<string>, setB: ReadonlySet<string>)
   return intersectionSize / unionSize
 }
 
-const SIMILARITY_THRESHOLD = 0.6
+const SIMILARITY_THRESHOLD = 0.45
 
 function selectHigherPriority(a: NewsItem, b: NewsItem): NewsItem {
   const priorityA = SOURCE_PRIORITY_ORDER[a.priority]
