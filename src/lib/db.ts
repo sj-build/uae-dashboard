@@ -119,6 +119,86 @@ export async function upsertDocumentFromInsight(insight: {
 }
 
 // =============================================================================
+// Places: Neighborhood guide → RAG documents
+// =============================================================================
+
+export async function upsertDocumentFromPlace(place: {
+  id: string
+  slug: string
+  city: string
+  name_en: string
+  name_ko: string
+  tagline_en: string
+  tagline_ko: string
+  categories: string[]
+  best_for: string[]
+  description_en: string
+  description_ko: string
+  highlights: Array<{ label: string; value: string }>
+  practical: { access: string; vibe: string; typical_meetings: string; tips: string }
+  free_zone?: { is_free_zone: boolean; name?: string; focus?: string; benefits?: string[] } | null
+  keywords: string[]
+  as_of?: string | null
+  confidence?: number
+}) {
+  const supabase = getSupabaseAdmin()
+
+  const highlightsText = place.highlights
+    .map(h => `- ${h.label}: ${h.value}`)
+    .join('\n')
+
+  const practicalText = [
+    `접근성: ${place.practical.access}`,
+    `분위기: ${place.practical.vibe}`,
+    `주요 미팅: ${place.practical.typical_meetings}`,
+    `팁: ${place.practical.tips}`,
+  ].join('\n')
+
+  const freeZoneText = place.free_zone?.is_free_zone
+    ? `프리존: ${place.free_zone.name ?? ''} — ${place.free_zone.focus ?? ''}`
+    : ''
+
+  const content = [
+    `${place.name_ko} (${place.name_en}) — ${place.city === 'abudhabi' ? '아부다비' : '두바이'}`,
+    place.tagline_ko,
+    '',
+    place.description_ko,
+    '',
+    '주요 하이라이트:',
+    highlightsText,
+    '',
+    '실용 정보:',
+    practicalText,
+    freeZoneText ? `\n${freeZoneText}` : '',
+  ].filter(Boolean).join('\n')
+
+  const content_hash = sha256('place|' + place.slug)
+
+  const { data, error } = await supabase
+    .from('documents')
+    .upsert({
+      source: 'place',
+      title: `${place.name_ko} (${place.name_en})`,
+      content,
+      summary: place.tagline_ko,
+      tags: [...place.categories, ...place.keywords, place.city],
+      metadata: { place_id: place.id, slug: place.slug, city: place.city },
+      as_of: place.as_of ?? null,
+      content_hash,
+      last_updated: new Date().toISOString(),
+    }, { onConflict: 'content_hash' })
+    .select('id')
+    .single()
+
+  if (error && !error.message.includes('duplicate')) {
+    console.error('upsertDocumentFromPlace error:', error)
+    throw error
+  }
+
+  return data?.id as string | undefined
+}
+
+// =============================================================================
 // Insights: Structured insight units
 // =============================================================================
 

@@ -1,0 +1,533 @@
+[
+  {
+    "city": "abudhabi",
+    "slug": "saadiyat-island",
+    "name_en": "Saadiyat Island",
+    "name_ko": "사디야트 섬",
+    "tagline_en": "Abu Dhabi's cultural district — home to Louvre Abu Dhabi and luxury beachfront living",
+    "tagline_ko": "아부다비의 문화·예술 중심지 — 루브르 아부다비, 럭셔리 비치프론트",
+    "categories": ["culture", "residential", "leisure"],
+    "best_for": ["cultural_tourism", "luxury_living", "art_galleries"],
+    "description_en": "Saadiyat Island is Abu Dhabi's premier cultural destination, hosting world-class museums including the Louvre Abu Dhabi and the upcoming Guggenheim Abu Dhabi. The island features luxury residential communities, pristine beaches, and upscale hospitality. It's a key showcase of Abu Dhabi's vision to become a global cultural capital.",
+    "description_ko": "사디야트 섬은 아부다비의 대표 문화 관광지로, 루브르 아부다비와 곧 개관할 구겐하임 아부다비 등 세계적 미술관이 자리잡고 있습니다. 럭셔리 주거단지, 프리스틴 비치, 고급 호텔이 함께하며, 아부다비를 글로벌 문화 수도로 만들겠다는 비전의 핵심 거점입니다.",
+    "highlights": [
+      {"label": "Louvre Abu Dhabi", "value": "세계적 미술관 — Jean Nouvel 설계"},
+      {"label": "Guggenheim Abu Dhabi", "value": "2025년 개관 예정, Frank Gehry 설계"},
+      {"label": "Natural History Museum", "value": "2025년 개관, 130억년 역사 전시"},
+      {"label": "Saadiyat Beach", "value": "청정 해변, 거북이 보호구역"}
+    ],
+    "practical": {
+      "access": "아부다비 시내에서 차로 15분, Sheikh Zayed Bridge로 연결",
+      "vibe": "고급스럽고 조용한 문화/리조트 분위기",
+      "typical_meetings": "문화 관련 기관/이벤트, 럭셔리 브랜드 미팅",
+      "tips": "루브르는 화요일 휴관, 주말(금-토)에 혼잡"
+    },
+    "free_zone": {"is_free_zone": false},
+    "keywords": ["Saadiyat", "Louvre", "Guggenheim", "cultural district", "museum"],
+    "icon": "🎨",
+    "links": [
+      {"title": "Louvre Abu Dhabi", "url": "https://www.louvreabudhabi.ae/", "source_type": "official"},
+      {"title": "Saadiyat Island", "url": "https://www.saadiyatisland.ae/", "source_type": "official"},
+      {"title": "Google Maps", "url": "https://maps.app.goo.gl/saadiyat", "source_type": "maps"}
+    ],
+    "sources": [
+      {"url": "https://www.saadiyatisland.ae/", "title": "Saadiyat Island Official", "trust_level": 5, "as_of": "2026-01"}
+    ],
+    "as_of": "2026-02-01",
+    "confidence": 0.85
+  },
+  {
+    "city": "abudhabi",
+    "slug": "al-maryah-island",
+    "name_en": "Al Maryah Island",
+    "name_ko": "알 마리야 섬",
+    "tagline_en": "Abu Dhabi's financial center — home to ADGM (Abu Dhabi Global Market)",
+    "tagline_ko": "아부다비의 금융 중심지 — ADGM(아부다비 글로벌 마켓) 소재",
+    "categories": ["business", "finance"],
+    "best_for": ["investor_meetings", "financial_services", "office_base"],
+    "description_en": "Al Maryah Island is the financial heart of Abu Dhabi, hosting the Abu Dhabi Global Market (ADGM), an international financial free zone. The island features premium office towers, The Galleria shopping mall, Cleveland Clinic Abu Dhabi, and the Four Seasons Hotel. It's the go-to location for financial services, fund management, and regulatory meetings.",
+    "description_ko": "알 마리야 섬은 아부다비의 금융 중심지로, 국제 금융 프리존인 ADGM(아부다비 글로벌 마켓)이 위치합니다. 프리미엄 오피스 타워, 더 갤러리아 쇼핑몰, 클리블랜드 클리닉, 포시즌스 호텔이 자리하고 있으며, 금융서비스/펀드/규제 관련 미팅의 핵심 장소입니다.",
+    "highlights": [
+      {"label": "ADGM", "value": "영국 보통법 적용 금융 프리존"},
+      {"label": "The Galleria", "value": "400+ 매장, 럭셔리 쇼핑몰"},
+      {"label": "Cleveland Clinic", "value": "세계적 수준 의료시설"},
+      {"label": "Four Seasons", "value": "비즈니스 미팅 선호 호텔"}
+    ],
+    "practical": {
+      "access": "아부다비 시내에서 차로 10분, 사디야트와 다리로 연결",
+      "vibe": "모던하고 세련된 금융 비즈니스 허브",
+      "typical_meetings": "펀드 설립/규제, 금융 라이선스, ADGM 관련 미팅",
+      "tips": "ADGM Courts는 영국법 적용, 금융 분쟁 전문"
+    },
+    "free_zone": {"is_free_zone": true, "name": "ADGM", "notes": "Abu Dhabi Global Market — English common law financial free zone"},
+    "keywords": ["Al Maryah", "ADGM", "Abu Dhabi Global Market", "Galleria", "financial center"],
+    "icon": "🏦",
+    "links": [
+      {"title": "ADGM", "url": "https://www.adgm.com/", "source_type": "official"},
+      {"title": "The Galleria", "url": "https://www.thegalleria.ae/", "source_type": "official"},
+      {"title": "Google Maps", "url": "https://maps.app.goo.gl/almaryah", "source_type": "maps"}
+    ],
+    "sources": [
+      {"url": "https://www.adgm.com/", "title": "ADGM Official", "trust_level": 5, "as_of": "2026-01"}
+    ],
+    "as_of": "2026-02-01",
+    "confidence": 0.9
+  },
+  {
+    "city": "abudhabi",
+    "slug": "downtown-corniche",
+    "name_en": "Downtown / Corniche",
+    "name_ko": "다운타운 / 코르니쉬",
+    "tagline_en": "Abu Dhabi's administrative heart and iconic waterfront promenade",
+    "tagline_ko": "아부다비 행정 중심가 + 해변 산책로 코르니쉬",
+    "categories": ["government", "residential", "leisure"],
+    "best_for": ["government_meetings", "local_life", "family_trip"],
+    "description_en": "Downtown Abu Dhabi and the Corniche represent the city's administrative core and lifestyle hub. The Corniche is an 8km waterfront promenade with parks, beaches, and cycling paths. Nearby are major government buildings, embassies, and traditional souqs. This is where everyday Abu Dhabi life happens.",
+    "description_ko": "다운타운 아부다비와 코르니쉬는 아부다비의 행정 중심이자 시민 생활의 핵심입니다. 코르니쉬는 8km 해변 산책로로 공원, 비치, 자전거 도로가 있습니다. 주변에 주요 정부 건물, 대사관, 전통 수크(시장)가 밀집해 있습니다.",
+    "highlights": [
+      {"label": "Corniche Beach", "value": "블루 플래그 인증 해변, 8km 산책로"},
+      {"label": "Qasr Al Hosn", "value": "아부다비 최초 건축물, 역사 박물관"},
+      {"label": "World Trade Center", "value": "전시/컨벤션 센터 + 수크"},
+      {"label": "Nation Towers", "value": "세인트 레지스 호텔, 주요 오피스"}
+    ],
+    "practical": {
+      "access": "아부다비 중심부, 공항에서 차로 30분",
+      "vibe": "활기찬 도심, 전통과 현대가 공존",
+      "typical_meetings": "정부 기관 미팅, 대사관 방문, 로컬 비즈니스",
+      "tips": "금요일은 정부 기관 휴무, 여름(6-9월)에는 실외 활동 제한"
+    },
+    "free_zone": {"is_free_zone": false},
+    "keywords": ["Corniche", "Downtown", "Qasr Al Hosn", "WTC", "Abu Dhabi downtown"],
+    "icon": "🏙️",
+    "links": [
+      {"title": "Visit Abu Dhabi", "url": "https://visitabudhabi.ae/", "source_type": "official"},
+      {"title": "Google Maps", "url": "https://maps.app.goo.gl/corniche-abudhabi", "source_type": "maps"}
+    ],
+    "sources": [
+      {"url": "https://visitabudhabi.ae/", "title": "Visit Abu Dhabi", "trust_level": 5, "as_of": "2026-01"}
+    ],
+    "as_of": "2026-02-01",
+    "confidence": 0.85
+  },
+  {
+    "city": "abudhabi",
+    "slug": "yas-island",
+    "name_en": "Yas Island",
+    "name_ko": "야스 섬",
+    "tagline_en": "Abu Dhabi's entertainment mega-island — F1, theme parks, concerts",
+    "tagline_ko": "아부다비의 엔터테인먼트 메가 아일랜드 — F1, 테마파크, 콘서트",
+    "categories": ["leisure", "culture"],
+    "best_for": ["entertainment", "family_trip", "events"],
+    "description_en": "Yas Island is Abu Dhabi's premier leisure destination featuring Ferrari World, Warner Bros. World, SeaWorld, Yas Waterworld, and the Yas Marina Circuit (home of F1 Abu Dhabi GP). The island also hosts Etihad Arena for concerts and events, making it a year-round entertainment hub.",
+    "description_ko": "야스 섬은 아부다비의 대표 레저 관광지로, 페라리 월드, 워너 브라더스 월드, 씨월드, 야스 워터월드 등 대형 테마파크가 밀집해 있습니다. F1 아부다비 그랑프리가 열리는 야스 마리나 서킷과 에티하드 아레나(콘서트/이벤트)도 위치합니다.",
+    "highlights": [
+      {"label": "Ferrari World", "value": "세계 최초 페라리 테마파크"},
+      {"label": "F1 Abu Dhabi GP", "value": "야스 마리나 서킷, 매년 11-12월"},
+      {"label": "Yas Mall", "value": "400+ 매장, 아부다비 최대 쇼핑몰"},
+      {"label": "Etihad Arena", "value": "18,000석 다목적 공연장"}
+    ],
+    "practical": {
+      "access": "아부다비 공항에서 차로 10분, 시내에서 25분",
+      "vibe": "활기찬 레저/엔터테인먼트, 가족 단위 방문 최적",
+      "typical_meetings": "이벤트/스포츠 산업, 관광/호스피탈리티 미팅",
+      "tips": "F1 시즌(11-12월)에는 호텔 가격 3-5배 상승"
+    },
+    "free_zone": {"is_free_zone": false},
+    "keywords": ["Yas", "Ferrari World", "F1", "Warner Bros", "theme park", "Yas Marina"],
+    "icon": "🎢",
+    "links": [
+      {"title": "Yas Island", "url": "https://www.yasisland.com/", "source_type": "official"},
+      {"title": "Yas Marina Circuit", "url": "https://www.yasmarinacircuit.com/", "source_type": "official"}
+    ],
+    "sources": [
+      {"url": "https://www.yasisland.com/", "title": "Yas Island Official", "trust_level": 5, "as_of": "2026-01"}
+    ],
+    "as_of": "2026-02-01",
+    "confidence": 0.9
+  },
+  {
+    "city": "abudhabi",
+    "slug": "al-reem-island",
+    "name_en": "Al Reem Island",
+    "name_ko": "알 림 섬",
+    "tagline_en": "Abu Dhabi's booming mixed-use residential and office district",
+    "tagline_ko": "아부다비의 주거+오피스 복합 신흥 개발지구",
+    "categories": ["residential", "business"],
+    "best_for": ["expat_living", "office_base", "affordable_option"],
+    "description_en": "Al Reem Island is one of Abu Dhabi's fastest-growing residential and commercial areas. It offers a mix of luxury and mid-range apartments, office towers, and retail. Popular with expats for its relatively affordable housing compared to Saadiyat, it's well-connected to the mainland.",
+    "description_ko": "알 림 섬은 아부다비에서 가장 빠르게 성장 중인 주거/상업 복합 지역입니다. 럭셔리부터 중저가 아파트, 오피스 타워, 리테일이 혼합되어 있으며, 사디야트 대비 합리적인 주거비로 주재원들에게 인기가 높습니다.",
+    "highlights": [
+      {"label": "Gate Towers", "value": "알 림의 랜드마크 트윈 타워"},
+      {"label": "The Arc", "value": "복합 상업/주거 개발"},
+      {"label": "Boutik Mall", "value": "레스토랑/카페 밀집 몰"},
+      {"label": "Paris-Sorbonne Abu Dhabi", "value": "소르본 대학 아부다비 캠퍼스"}
+    ],
+    "practical": {
+      "access": "시내에서 차로 10분, 알 마리야/사디야트과 인접",
+      "vibe": "모던한 주거 중심, 젊은 프로페셔널/가족",
+      "typical_meetings": "부동산, 주재원 서비스, 교육",
+      "tips": "주거비가 사디야트의 60-70% 수준"
+    },
+    "free_zone": {"is_free_zone": false},
+    "keywords": ["Al Reem", "Reem Island", "Gate Towers", "residential"],
+    "icon": "🏢",
+    "links": [
+      {"title": "Google Maps", "url": "https://maps.app.goo.gl/alreem", "source_type": "maps"}
+    ],
+    "sources": [],
+    "as_of": "2026-02-01",
+    "confidence": 0.75
+  },
+  {
+    "city": "abudhabi",
+    "slug": "masdar-city",
+    "name_en": "Masdar City",
+    "name_ko": "마스다르 시티",
+    "tagline_en": "Abu Dhabi's sustainable tech hub — clean energy innovation cluster",
+    "tagline_ko": "아부다비의 지속가능 기술 허브 — 클린에너지 혁신 클러스터",
+    "categories": ["business", "industrial"],
+    "best_for": ["cleantech", "innovation", "sustainability"],
+    "description_en": "Masdar City is Abu Dhabi's flagship sustainable urban development, designed as a low-carbon city. It hosts the Masdar Institute (now part of Khalifa University), IRENA headquarters, and a growing cluster of clean energy and tech startups. The city itself serves as a living lab for sustainable technologies.",
+    "description_ko": "마스다르 시티는 아부다비의 대표적 지속가능 도시 개발로, 저탄소 도시로 설계되었습니다. IRENA(국제재생에너지기구) 본부, 칼리파 대학(구 마스다르 연구소), 클린에너지/테크 스타트업 클러스터가 입주해 있습니다.",
+    "highlights": [
+      {"label": "IRENA HQ", "value": "국제재생에너지기구 글로벌 본부"},
+      {"label": "Masdar Free Zone", "value": "클린테크/혁신 프리존"},
+      {"label": "Khalifa University", "value": "마스다르 캠퍼스 (구 Masdar Institute)"},
+      {"label": "ADSW", "value": "아부다비 지속가능주간 개최지"}
+    ],
+    "practical": {
+      "access": "아부다비 공항에서 차로 15분",
+      "vibe": "미래지향적, 연구/이노베이션 캠퍼스 분위기",
+      "typical_meetings": "클린테크, 재생에너지, ESG, 스타트업",
+      "tips": "COP/ADSW 시기에 방문하면 네트워킹 기회 풍부"
+    },
+    "free_zone": {"is_free_zone": true, "name": "Masdar City Free Zone", "notes": "Clean technology and innovation free zone"},
+    "keywords": ["Masdar", "IRENA", "clean energy", "sustainability", "green tech", "ADSW"],
+    "icon": "🌱",
+    "links": [
+      {"title": "Masdar City", "url": "https://masdar.ae/en/masdar-city", "source_type": "official"},
+      {"title": "Masdar Free Zone", "url": "https://masdar.ae/en/masdar-free-zone", "source_type": "official"}
+    ],
+    "sources": [
+      {"url": "https://masdar.ae/", "title": "Masdar Official", "trust_level": 5, "as_of": "2026-01"}
+    ],
+    "as_of": "2026-02-01",
+    "confidence": 0.85
+  },
+  {
+    "city": "abudhabi",
+    "slug": "kizad",
+    "name_en": "KIZAD (Khalifa Industrial Zone)",
+    "name_ko": "키자드 (칼리파 산업지대)",
+    "tagline_en": "Abu Dhabi's industrial and logistics mega-zone near Khalifa Port",
+    "tagline_ko": "아부다비의 산업·물류 메가 존 — 칼리파항 인접",
+    "categories": ["industrial", "business"],
+    "best_for": ["manufacturing", "logistics", "supply_chain"],
+    "description_en": "KIZAD is one of the largest industrial zones in the region, adjacent to Khalifa Port. It spans over 410 sq km and hosts manufacturing, logistics, aluminum smelting (EGA), and trade operations. KIZAD offers competitive free zone and non-free zone options for businesses.",
+    "description_ko": "키자드는 칼리파항 인접 중동 최대급 산업지대로, 410km² 이상 규모입니다. 제조업, 물류, 알루미늄 제련(EGA), 무역 운영이 집중되어 있으며, 프리존/비프리존 옵션을 모두 제공합니다.",
+    "highlights": [
+      {"label": "Khalifa Port", "value": "세미오토 컨테이너 터미널, 글로벌 허브"},
+      {"label": "EGA", "value": "Emirates Global Aluminium 제련소"},
+      {"label": "410 km²", "value": "중동 최대급 산업지대 면적"},
+      {"label": "Tax Benefits", "value": "법인세 0% (프리존), 100% 외국인 소유"}
+    ],
+    "practical": {
+      "access": "아부다비 시내에서 차로 45분, 아부다비-두바이 중간",
+      "vibe": "대규모 산업/물류 단지",
+      "typical_meetings": "제조업 투자, 물류/공급망, 산업 인프라",
+      "tips": "사전 방문 예약 필수, 안전장비 지참"
+    },
+    "free_zone": {"is_free_zone": true, "name": "KIZAD Free Zone", "notes": "Industrial free zone with 0% corporate tax and 100% foreign ownership"},
+    "keywords": ["KIZAD", "Khalifa Industrial", "Khalifa Port", "industrial zone", "logistics"],
+    "icon": "🏗️",
+    "links": [
+      {"title": "KIZAD", "url": "https://www.kizad.ae/", "source_type": "official"},
+      {"title": "AD Ports", "url": "https://www.adports.ae/", "source_type": "official"}
+    ],
+    "sources": [
+      {"url": "https://www.kizad.ae/", "title": "KIZAD Official", "trust_level": 5, "as_of": "2026-01"}
+    ],
+    "as_of": "2026-02-01",
+    "confidence": 0.8
+  },
+  {
+    "city": "dubai",
+    "slug": "difc",
+    "name_en": "DIFC (Dubai International Financial Centre)",
+    "name_ko": "DIFC (두바이 국제금융센터)",
+    "tagline_en": "Dubai's premier financial free zone — global finance, legal, and fine dining hub",
+    "tagline_ko": "두바이의 대표 금융 프리존 — 글로벌 금융, 법률, 파인다이닝의 중심",
+    "categories": ["business", "finance"],
+    "best_for": ["financial_services", "legal_advisory", "fund_management"],
+    "description_en": "DIFC is Dubai's flagship financial free zone and the leading financial hub in the Middle East. It operates under its own legal system based on English common law, with independent courts and a financial regulator (DFSA). Home to 4,000+ companies, major banks, and world-class restaurants.",
+    "description_ko": "DIFC는 두바이의 대표 금융 프리존이자 중동 최대 금융 허브입니다. 영국 보통법 기반의 독립된 법체계, 자체 법원(DIFC Courts), 금융규제기관(DFSA)을 운영합니다. 4,000여 개 기업, 주요 글로벌 은행, 세계적 레스토랑이 입주해 있습니다.",
+    "highlights": [
+      {"label": "DFSA", "value": "독립 금융규제기관"},
+      {"label": "DIFC Courts", "value": "영국법 기반 독립 법원"},
+      {"label": "Gate Building", "value": "DIFC의 상징적 랜드마크"},
+      {"label": "4,000+ Companies", "value": "글로벌 은행/자산운용사 밀집"}
+    ],
+    "practical": {
+      "access": "두바이 메트로 Financial Centre역 직결",
+      "vibe": "세련된 국제 금융가, 점심/디너 미팅 최적",
+      "typical_meetings": "펀드 설립, 금융 라이선스, M&A, 법률 자문",
+      "tips": "Gate Avenue에서 점심 미팅 후 산책 코스 추천"
+    },
+    "free_zone": {"is_free_zone": true, "name": "DIFC", "notes": "Independent legal jurisdiction based on English common law with DFSA regulation"},
+    "keywords": ["DIFC", "Dubai International Financial Centre", "DFSA", "Gate Building", "financial hub"],
+    "icon": "🏛️",
+    "links": [
+      {"title": "DIFC", "url": "https://www.difc.ae/", "source_type": "official"},
+      {"title": "DFSA", "url": "https://www.dfsa.ae/", "source_type": "official"}
+    ],
+    "sources": [
+      {"url": "https://www.difc.ae/", "title": "DIFC Official", "trust_level": 5, "as_of": "2026-01"}
+    ],
+    "as_of": "2026-02-01",
+    "confidence": 0.95
+  },
+  {
+    "city": "dubai",
+    "slug": "downtown-dubai",
+    "name_en": "Downtown Dubai",
+    "name_ko": "다운타운 두바이",
+    "tagline_en": "The iconic heart of Dubai — Burj Khalifa, Dubai Mall, and Dubai Opera",
+    "tagline_ko": "두바이의 심장부 — 부르즈 칼리파, 두바이 몰, 두바이 오페라",
+    "categories": ["business", "leisure", "culture"],
+    "best_for": ["landmark_visit", "luxury_shopping", "business_meetings"],
+    "description_en": "Downtown Dubai is the city's most iconic district, home to the Burj Khalifa (world's tallest building), Dubai Mall (world's largest), and the Dubai Fountain. It's a mix of luxury residential, premium office space, high-end retail, and cultural venues like Dubai Opera.",
+    "description_ko": "다운타운 두바이는 세계 최고층 빌딩 부르즈 칼리파, 세계 최대 쇼핑몰 두바이 몰, 두바이 분수쇼가 있는 두바이의 핵심 랜드마크 지구입니다. 럭셔리 주거, 프리미엄 오피스, 두바이 오페라 등이 밀집해 있습니다.",
+    "highlights": [
+      {"label": "Burj Khalifa", "value": "828m, 세계 최고층 빌딩"},
+      {"label": "Dubai Mall", "value": "1,200+ 매장, 수족관, 아이스링크"},
+      {"label": "Dubai Fountain", "value": "세계 최대 분수쇼 (매일 저녁)"},
+      {"label": "Dubai Opera", "value": "2,000석 다목적 공연장"}
+    ],
+    "practical": {
+      "access": "두바이 메트로 Burj Khalifa/Dubai Mall역",
+      "vibe": "화려하고 국제적인 도심, 관광객 밀집",
+      "typical_meetings": "프리미엄 비즈니스, 부동산, 럭셔리 리테일",
+      "tips": "주말 저녁 두바이 몰은 극도로 혼잡, 평일 오전 추천"
+    },
+    "free_zone": {"is_free_zone": false},
+    "keywords": ["Downtown", "Burj Khalifa", "Dubai Mall", "Dubai Fountain", "Dubai Opera"],
+    "icon": "🗼",
+    "links": [
+      {"title": "Burj Khalifa", "url": "https://www.burjkhalifa.ae/", "source_type": "official"},
+      {"title": "Dubai Mall", "url": "https://www.thedubaimall.com/", "source_type": "official"}
+    ],
+    "sources": [
+      {"url": "https://www.visitdubai.com/", "title": "Visit Dubai", "trust_level": 5, "as_of": "2026-01"}
+    ],
+    "as_of": "2026-02-01",
+    "confidence": 0.95
+  },
+  {
+    "city": "dubai",
+    "slug": "business-bay",
+    "name_en": "Business Bay",
+    "name_ko": "비즈니스 베이",
+    "tagline_en": "Dubai's expanding CBD — high-rise offices, hotels, and the Dubai Canal",
+    "tagline_ko": "두바이의 확장되는 CBD — 고층 오피스, 호텔, 두바이 캐널",
+    "categories": ["business", "residential"],
+    "best_for": ["office_base", "startup_hub", "business_meetings"],
+    "description_en": "Business Bay is Dubai's central business district adjacent to Downtown Dubai. It features a dense cluster of commercial towers, hotels, and residential buildings along the Dubai Water Canal. It's a more affordable alternative to DIFC for offices while still being in a prime central location.",
+    "description_ko": "비즈니스 베이는 다운타운 두바이에 인접한 CBD로, 두바이 워터 캐널을 따라 상업 타워, 호텔, 주거 빌딩이 밀집해 있습니다. DIFC보다 합리적인 오피스 비용으로 중심부 입지를 원하는 기업에게 인기입니다.",
+    "highlights": [
+      {"label": "Dubai Canal", "value": "3.2km 워터프론트 산책로"},
+      {"label": "Bay Square", "value": "레스토랑/카페 밀집 상업지구"},
+      {"label": "Marasi Marina", "value": "요트 마리나 + F&B 허브"},
+      {"label": "Executive Towers", "value": "대규모 오피스 클러스터"}
+    ],
+    "practical": {
+      "access": "두바이 메트로 Business Bay역, 다운타운과 도보 연결",
+      "vibe": "활기찬 비즈니스 & 주거 복합, 카페 문화",
+      "typical_meetings": "스타트업, SME 오피스, 부동산, 컨설팅",
+      "tips": "DIFC와 도보 15분 거리, 메트로 1정거장"
+    },
+    "free_zone": {"is_free_zone": false},
+    "keywords": ["Business Bay", "Dubai Canal", "Bay Square", "CBD"],
+    "icon": "🏬",
+    "links": [
+      {"title": "Google Maps", "url": "https://maps.app.goo.gl/businessbay", "source_type": "maps"}
+    ],
+    "sources": [],
+    "as_of": "2026-02-01",
+    "confidence": 0.8
+  },
+  {
+    "city": "dubai",
+    "slug": "dubai-marina",
+    "name_en": "Dubai Marina / JBR",
+    "name_ko": "두바이 마리나 / JBR",
+    "tagline_en": "Dubai's waterfront lifestyle hub — yachts, beach, dining, and expat living",
+    "tagline_ko": "두바이의 워터프론트 라이프스타일 — 요트, 비치, 다이닝, 주재원 생활",
+    "categories": ["residential", "leisure"],
+    "best_for": ["expat_living", "beach_lifestyle", "dining"],
+    "description_en": "Dubai Marina is a stunning waterfront district with a man-made canal, luxury yachts, and high-rise apartments. JBR (Jumeirah Beach Residence) next door offers beachfront living and The Walk, a popular promenade. It's the epicenter of Dubai's expat nightlife and casual dining scene.",
+    "description_ko": "두바이 마리나는 인공 운하, 럭셔리 요트, 고층 아파트가 어우러진 워터프론트 지구입니다. 인접한 JBR(주메이라 비치 레지던스)은 비치프론트 생활과 더 워크 산책로로 유명합니다. 주재원 나이트라이프와 캐주얼 다이닝의 중심입니다.",
+    "highlights": [
+      {"label": "Marina Walk", "value": "레스토랑/카페 밀집 산책로"},
+      {"label": "JBR The Walk", "value": "비치프론트 쇼핑/다이닝 거리"},
+      {"label": "Ain Dubai", "value": "세계 최대 관람차 (250m)"},
+      {"label": "Bluewaters Island", "value": "아인 두바이 + 리조트 & 리테일"}
+    ],
+    "practical": {
+      "access": "두바이 메트로 DMCC역/JLT역, 트램 연결",
+      "vibe": "활기찬 해변 라이프스타일, 국제적",
+      "typical_meetings": "캐주얼 비즈니스, 부동산, 관광/호스피탈리티",
+      "tips": "주말 저녁 주차 매우 어려움, 메트로/트램 추천"
+    },
+    "free_zone": {"is_free_zone": false},
+    "keywords": ["Dubai Marina", "JBR", "Jumeirah Beach", "Marina Walk", "Ain Dubai"],
+    "icon": "⛵",
+    "links": [
+      {"title": "Google Maps", "url": "https://maps.app.goo.gl/dubaimarina", "source_type": "maps"}
+    ],
+    "sources": [],
+    "as_of": "2026-02-01",
+    "confidence": 0.85
+  },
+  {
+    "city": "dubai",
+    "slug": "jlt",
+    "name_en": "JLT (Jumeirah Lake Towers)",
+    "name_ko": "JLT (주메이라 레이크 타워)",
+    "tagline_en": "Dubai's affordable office hub — SMEs, startups, and DMCC free zone",
+    "tagline_ko": "두바이의 합리적 오피스 허브 — 중소기업, 스타트업, DMCC 프리존",
+    "categories": ["business"],
+    "best_for": ["startup_hub", "sme_office", "affordable_option"],
+    "description_en": "JLT is a mixed-use district centered around artificial lakes, known for its affordable office and residential options. It houses the DMCC (Dubai Multi Commodities Centre) free zone, one of the world's largest free zones with 22,000+ companies. Popular with SMEs and startups.",
+    "description_ko": "JLT는 인공 호수를 중심으로 한 복합 지구로, 합리적인 오피스/주거 비용으로 유명합니다. 세계 최대 프리존 중 하나인 DMCC(두바이 다중상품센터)가 위치하며, 22,000개 이상의 기업이 입주해 있습니다.",
+    "highlights": [
+      {"label": "DMCC", "value": "세계 최대 프리존 중 하나, 22,000+ 기업"},
+      {"label": "Almas Tower", "value": "DMCC 본부, 다이아몬드 거래소"},
+      {"label": "JLT Park", "value": "호수변 공원, 러닝/피크닉 인기"},
+      {"label": "Affordable Offices", "value": "DIFC 대비 60-70% 수준 임대료"}
+    ],
+    "practical": {
+      "access": "두바이 메트로 DMCC역 직결",
+      "vibe": "실용적인 비즈니스 지구, 다양한 국적 커뮤니티",
+      "typical_meetings": "무역, 상품 거래, 스타트업, SME 설립",
+      "tips": "DMCC 라이선스가 두바이에서 가장 인기 있는 프리존 옵션 중 하나"
+    },
+    "free_zone": {"is_free_zone": true, "name": "DMCC", "notes": "Dubai Multi Commodities Centre — one of the world's largest free zones, 22,000+ companies"},
+    "keywords": ["JLT", "DMCC", "Jumeirah Lake Towers", "commodities", "Almas Tower"],
+    "icon": "💼",
+    "links": [
+      {"title": "DMCC", "url": "https://www.dmcc.ae/", "source_type": "official"}
+    ],
+    "sources": [
+      {"url": "https://www.dmcc.ae/", "title": "DMCC Official", "trust_level": 5, "as_of": "2026-01"}
+    ],
+    "as_of": "2026-02-01",
+    "confidence": 0.9
+  },
+  {
+    "city": "dubai",
+    "slug": "internet-city-media-city",
+    "name_en": "Internet City / Media City",
+    "name_ko": "인터넷 시티 / 미디어 시티",
+    "tagline_en": "Dubai's tech and media cluster — Google, Microsoft, Meta, CNN, and MBC",
+    "tagline_ko": "두바이의 테크·미디어 클러스터 — 구글, MS, 메타, CNN, MBC 입주",
+    "categories": ["business", "industrial"],
+    "best_for": ["tech_companies", "media_industry", "digital_startups"],
+    "description_en": "Dubai Internet City (DIC) and Dubai Media City (DMC) form the UAE's largest tech and media cluster. DIC hosts offices of Google, Microsoft, Meta, LinkedIn, and hundreds of tech companies. DMC is home to CNN, BBC, MBC, and major media firms. Both are TECOM-managed free zones.",
+    "description_ko": "두바이 인터넷 시티(DIC)와 미디어 시티(DMC)는 UAE 최대의 테크·미디어 클러스터입니다. DIC에는 구글, MS, 메타, 링크드인 등이 입주해 있고, DMC에는 CNN, BBC, MBC 등 주요 미디어 기업이 위치합니다. 모두 TECOM 관리 프리존입니다.",
+    "highlights": [
+      {"label": "Google MENA HQ", "value": "구글 중동·북아프리카 본부"},
+      {"label": "Microsoft HQ", "value": "마이크로소프트 중동 본부"},
+      {"label": "MBC Group", "value": "아랍 최대 미디어 그룹 본사"},
+      {"label": "in5 Tech", "value": "TECOM 운영 인큐베이터/액셀러레이터"}
+    ],
+    "practical": {
+      "access": "두바이 메트로 Internet City/UAEExchange역",
+      "vibe": "글로벌 테크 캠퍼스 분위기, 캐주얼",
+      "typical_meetings": "테크 파트너십, 디지털 미디어, 스타트업 투자",
+      "tips": "인근 Knowledge Village에 대학들 밀집 (인재 풀)"
+    },
+    "free_zone": {"is_free_zone": true, "name": "TECOM", "notes": "Dubai Internet City and Media City are TECOM-managed free zones for tech and media"},
+    "keywords": ["Internet City", "Media City", "DIC", "DMC", "TECOM", "Google", "tech hub"],
+    "icon": "💻",
+    "links": [
+      {"title": "TECOM", "url": "https://www.tecom.ae/", "source_type": "official"},
+      {"title": "Dubai Internet City", "url": "https://dic.ae/", "source_type": "official"}
+    ],
+    "sources": [
+      {"url": "https://www.tecom.ae/", "title": "TECOM Official", "trust_level": 5, "as_of": "2026-01"}
+    ],
+    "as_of": "2026-02-01",
+    "confidence": 0.9
+  },
+  {
+    "city": "dubai",
+    "slug": "deira-old-dubai",
+    "name_en": "Deira / Old Dubai",
+    "name_ko": "데이라 / 올드 두바이",
+    "tagline_en": "Dubai's historic trading heart — gold souk, spice souk, and Dubai Creek",
+    "tagline_ko": "두바이의 역사적 무역 중심지 — 골드 수크, 스파이스 수크, 두바이 크릭",
+    "categories": ["culture", "business"],
+    "best_for": ["cultural_tourism", "traditional_trade", "budget_shopping"],
+    "description_en": "Deira and Old Dubai represent the city's historic core along Dubai Creek. Home to the iconic Gold Souk, Spice Souk, and Textile Souk, this area preserves Dubai's trading heritage. The Al Fahidi Historical District showcases traditional wind-tower architecture.",
+    "description_ko": "데이라와 올드 두바이는 두바이 크릭을 따라 형성된 역사적 중심부입니다. 골드 수크, 스파이스 수크, 텍스타일 수크 등 전통 시장이 두바이의 무역 역사를 보존하고 있으며, 알 파히디 역사지구에서는 전통 바람탑(윈드타워) 건축을 볼 수 있습니다.",
+    "highlights": [
+      {"label": "Gold Souk", "value": "300+ 금/보석 매장, 세계 최대급"},
+      {"label": "Spice Souk", "value": "전통 향신료/차 시장"},
+      {"label": "Dubai Creek", "value": "아브라(전통 보트)로 크릭 횡단"},
+      {"label": "Al Fahidi", "value": "역사지구, 갤러리/카페 밀집"}
+    ],
+    "practical": {
+      "access": "두바이 메트로 Al Ras역/Al Fahidi역",
+      "vibe": "전통적이고 활기찬 시장 분위기, 다문화",
+      "typical_meetings": "전통 무역, 금/보석, 문화/관광 관련",
+      "tips": "아브라 비용은 1 AED (~350원), 저녁에 크릭 야경 추천"
+    },
+    "free_zone": {"is_free_zone": false},
+    "keywords": ["Deira", "Gold Souk", "Spice Souk", "Dubai Creek", "Old Dubai", "Al Fahidi"],
+    "icon": "🕌",
+    "links": [
+      {"title": "Visit Dubai - Old Dubai", "url": "https://www.visitdubai.com/en/discover/old-dubai", "source_type": "official"}
+    ],
+    "sources": [
+      {"url": "https://www.visitdubai.com/", "title": "Visit Dubai", "trust_level": 5, "as_of": "2026-01"}
+    ],
+    "as_of": "2026-02-01",
+    "confidence": 0.85
+  },
+  {
+    "city": "dubai",
+    "slug": "dubai-south",
+    "name_en": "Dubai South",
+    "name_ko": "두바이 사우스",
+    "tagline_en": "Dubai's future city around Al Maktoum Airport — logistics, aviation, Expo legacy",
+    "tagline_ko": "알 막툼 공항 중심 미래도시 — 물류, 항공, 엑스포 유산",
+    "categories": ["industrial", "business"],
+    "best_for": ["logistics", "aviation", "expo_legacy"],
+    "description_en": "Dubai South is a planned city around Al Maktoum International Airport (DWC), designed to become Dubai's new urban center. It hosted Expo 2020 (now District 2020/Expo City Dubai) and includes logistics districts, a free zone, and residential communities. The airport is planned to become the world's largest.",
+    "description_ko": "두바이 사우스는 알 막툼 국제공항(DWC) 주변으로 계획된 미래도시입니다. 엑스포 2020(현 디스트릭트 2020/엑스포 시티 두바이) 개최지이며, 물류 허브, 프리존, 주거 커뮤니티를 포함합니다. 향후 세계 최대 공항이 될 계획입니다.",
+    "highlights": [
+      {"label": "Expo City Dubai", "value": "엑스포 2020 유산, 전시/이벤트 지속"},
+      {"label": "Al Maktoum Airport", "value": "세계 최대 공항 확장 계획 (DWC)"},
+      {"label": "Logistics District", "value": "공항 인접 물류/유통 허브"},
+      {"label": "Dubai South Free Zone", "value": "물류/항공/무역 특화 프리존"}
+    ],
+    "practical": {
+      "access": "두바이 시내에서 차로 30-40분, 메트로 Route 2020",
+      "vibe": "개발 중인 미래도시, 대규모 인프라",
+      "typical_meetings": "물류/항공, 엑스포 시티 입주, 부동산 개발",
+      "tips": "아직 개발 초기 단계인 구역이 많아 사전 확인 필요"
+    },
+    "free_zone": {"is_free_zone": true, "name": "Dubai South Free Zone", "notes": "Logistics, aviation, and trade free zone near Al Maktoum International Airport"},
+    "keywords": ["Dubai South", "Expo City", "Al Maktoum Airport", "DWC", "logistics"],
+    "icon": "✈️",
+    "links": [
+      {"title": "Dubai South", "url": "https://www.dubaisouth.ae/", "source_type": "official"},
+      {"title": "Expo City Dubai", "url": "https://www.expocitydubai.com/", "source_type": "official"}
+    ],
+    "sources": [
+      {"url": "https://www.dubaisouth.ae/", "title": "Dubai South Official", "trust_level": 5, "as_of": "2026-01"}
+    ],
+    "as_of": "2026-02-01",
+    "confidence": 0.8
+  }
+]

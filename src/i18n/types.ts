@@ -4,6 +4,7 @@ export interface Translations {
   readonly nav: {
     readonly home: string
     readonly comparison: string
+    readonly places: string
     readonly politics: string
     readonly economy: string
     readonly society: string

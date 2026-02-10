@@ -4,6 +4,7 @@ export const ko: Translations = {
   nav: {
     home: '홈',
     comparison: 'UAE vs 한국',
+    places: '지역 가이드',
     politics: '정치',
     economy: '경제',
     society: '사회·문화·종교',

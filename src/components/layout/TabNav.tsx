@@ -7,6 +7,7 @@ import { useLocale } from '@/hooks/useLocale'
 const tabs = [
   { href: '/home', key: 'home' as const, icon: '🏠' },
   { href: '/comparison', key: 'comparison' as const, icon: '🔄' },
+  { href: '/places', key: 'places' as const, icon: '📍' },
   { href: '/politics', key: 'politics' as const, icon: '🏛️' },
   { href: '/economy', key: 'economy' as const, icon: '📈' },
   { href: '/society', key: 'society' as const, icon: '🎭' },
