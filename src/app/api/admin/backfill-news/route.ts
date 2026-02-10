@@ -123,8 +123,8 @@ export async function POST(request: Request): Promise<NextResponse> {
     const koQueries = BACKFILL_QUERIES_KO.map(q => q + dateQuerySuffix)
 
     const [googleEnResults, googleKoResults] = await Promise.allSettled([
-      crawlGoogleNews(enQueries, 'en'),
-      crawlGoogleNews(koQueries, 'ko'),
+      crawlGoogleNews(enQueries, { locale: 'en' }),
+      crawlGoogleNews(koQueries, { locale: 'ko' }),
     ])
 
     const allItems: NewsItem[] = []

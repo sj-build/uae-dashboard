@@ -2,25 +2,17 @@ import { NextResponse } from 'next/server'
 import { crawlGoogleNews, crawlNaverNews, enrichWithImages } from '@/lib/news/crawler'
 import { deduplicateNews } from '@/lib/news/deduplicator'
 import { tagNewsBatch } from '@/lib/news/tagger'
+import { filterNoise } from '@/lib/news/noise-filter'
+import { NEWS_KEYWORD_PACK } from '@/config/news-keyword-pack'
 import { ALL_KEYWORDS } from '@/data/news/keywords'
 import type { NewsItem } from '@/types/news'
 
-const DEFAULT_CRAWL_QUERIES: readonly string[] = [
-  'UAE sovereign wealth fund',
-  'Abu Dhabi investment',
-  'ADIA Mubadala',
-  'MGX crypto',
-  'G42 AI',
-  'ADNOC',
-  'UAE stablecoin',
-  'Binance UAE',
-  'Dubai real estate',
-  'Korea UAE',
-]
+export const maxDuration = 55
 
 export async function POST(request: Request): Promise<NextResponse> {
   try {
-    let queries: readonly string[] = DEFAULT_CRAWL_QUERIES
+    let useCustomQueries = false
+    let customQueries: readonly string[] = []
 
     try {
       const body: unknown = await request.json()
@@ -36,26 +28,57 @@ export async function POST(request: Request): Promise<NextResponse> {
         )
 
         if (validKeywords.length > 0) {
-          queries = validKeywords
+          useCustomQueries = true
+          customQueries = validKeywords
         }
       }
     } catch {
-      // Use default queries if body parsing fails
+      // Use keyword pack if body parsing fails
     }
 
-    const [googleResults, naverResults] = await Promise.allSettled([
-      crawlGoogleNews(queries),
-      crawlNaverNews(queries),
-    ])
+    let allItems: NewsItem[]
 
-    const allItems: NewsItem[] = []
+    if (useCustomQueries) {
+      // Custom queries: no lane tagging
+      const [googleResults, naverResults] = await Promise.allSettled([
+        crawlGoogleNews(customQueries),
+        crawlNaverNews(customQueries),
+      ])
 
-    if (googleResults.status === 'fulfilled') {
-      allItems.push(...googleResults.value)
-    }
+      allItems = []
+      if (googleResults.status === 'fulfilled') {
+        allItems.push(...googleResults.value)
+      }
+      if (naverResults.status === 'fulfilled') {
+        allItems.push(...naverResults.value)
+      }
+    } else {
+      // Default: use keyword pack with lane-based crawling
+      const [
+        googleDealResults,
+        googleMacroResults,
+        naverDealResults,
+        naverMacroResults,
+      ] = await Promise.allSettled([
+        crawlGoogleNews(NEWS_KEYWORD_PACK.google_news_rss_en.deal.always_on, { lane: 'deal', resultCap: 5 }),
+        crawlGoogleNews(NEWS_KEYWORD_PACK.google_news_rss_en.macro.always_on, { lane: 'macro', resultCap: 3 }),
+        crawlNaverNews(NEWS_KEYWORD_PACK.naver_search_ko.deal.always_on, { lane: 'deal', resultCap: 5 }),
+        crawlNaverNews(NEWS_KEYWORD_PACK.naver_search_ko.macro.always_on, { lane: 'macro', resultCap: 3 }),
+      ])
 
-    if (naverResults.status === 'fulfilled') {
-      allItems.push(...naverResults.value)
+      allItems = []
+      if (googleDealResults.status === 'fulfilled') {
+        allItems.push(...googleDealResults.value)
+      }
+      if (googleMacroResults.status === 'fulfilled') {
+        allItems.push(...googleMacroResults.value)
+      }
+      if (naverDealResults.status === 'fulfilled') {
+        allItems.push(...naverDealResults.value)
+      }
+      if (naverMacroResults.status === 'fulfilled') {
+        allItems.push(...naverMacroResults.value)
+      }
     }
 
     if (allItems.length === 0) {
@@ -65,12 +88,13 @@ export async function POST(request: Request): Promise<NextResponse> {
         meta: {
           total: 0,
           sources: { google: 0, naver: 0 },
-          queries: queries.length,
         },
       })
     }
 
-    const deduplicated = deduplicateNews(allItems)
+    // Apply noise filter before dedup
+    const cleaned = filterNoise(allItems)
+    const deduplicated = deduplicateNews(cleaned)
     const tagged = tagNewsBatch(deduplicated, ALL_KEYWORDS)
 
     // Enrich with OG images (only for first 20 items to limit fetch time)
@@ -88,7 +112,6 @@ export async function POST(request: Request): Promise<NextResponse> {
       meta: {
         total: tagged.length,
         sources: { google: googleCount, naver: naverCount },
-        queries: queries.length,
       },
     })
   } catch (error) {

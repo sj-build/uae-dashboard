@@ -3,23 +3,18 @@ import { z } from 'zod'
 import { timingSafeEqual } from 'crypto'
 import { searchNaverNews } from '@/lib/naver'
 import { saveNewsItems, startIngestionRun, finishIngestionRun } from '@/lib/newsStore'
+import { NEWS_KEYWORD_PACK } from '@/config/news-keyword-pack'
 
 export const maxDuration = 55
 
-// Default queries for Korean UAE news
+// Build default queries from keyword pack (deal + macro always_on)
 const DEFAULT_QUERIES: readonly string[] = [
-  'UAE 투자',
-  '아부다비 경제',
-  '한국 UAE 협력',
-  'UAE 부동산',
-  'UAE 크립토 스테이블코인',
-  'UAE AI 데이터센터',
-  '무바달라 ADIA',
-  '두바이 한국 기업',
-] as const
+  ...NEWS_KEYWORD_PACK.naver_search_ko.deal.always_on,
+  ...NEWS_KEYWORD_PACK.naver_search_ko.macro.always_on,
+]
 
 const RequestSchema = z.object({
-  queries: z.array(z.string().max(200)).min(1).max(20).optional(),
+  queries: z.array(z.string().max(200)).min(1).max(50).optional(),
   display: z.number().int().min(1).max(100).default(10),
   category: z.string().max(50).optional(),
 })

@@ -4,6 +4,8 @@ export type NewsPriority = 'reuters' | 'bloomberg' | 'financial_times' | 'wsj' |
 export type NewsImpact = 'high' | 'medium' | 'low'
 export type NewsCategory = 'politics' | 'economy' | 'society' | 'industry' | 'legal' | 'korea'
 
+export type NewsLane = 'deal' | 'macro'
+
 export interface NewsItem {
   readonly id: string
   readonly title: string
@@ -19,6 +21,7 @@ export interface NewsItem {
   readonly impact?: NewsImpact
   readonly category?: NewsCategory
   readonly relatedSection?: string // e.g., '/politics', '/economy'
+  readonly lane?: NewsLane
 }
 
 export interface Keyword {

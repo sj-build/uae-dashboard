@@ -3,30 +3,10 @@ import { z } from 'zod'
 import { crawlGoogleNews, crawlNaverNews, enrichWithImages } from '@/lib/news/crawler'
 import { deduplicateNews } from '@/lib/news/deduplicator'
 import { tagNewsBatch } from '@/lib/news/tagger'
+import { filterNoise } from '@/lib/news/noise-filter'
+import { NEWS_KEYWORD_PACK } from '@/config/news-keyword-pack'
 import { ALL_KEYWORDS } from '@/data/news/keywords'
 import type { NewsItem } from '@/types/news'
-
-const CRAWL_QUERIES_EN: readonly string[] = [
-  'UAE sovereign wealth fund',
-  'Abu Dhabi investment',
-  'ADIA Mubadala MGX',
-  'G42 AI UAE',
-  'ADNOC energy',
-  'UAE stablecoin crypto',
-  'Dubai real estate',
-  'Korea UAE partnership',
-  'UAE economy 2025',
-  'Stargate UAE AI',
-]
-
-const CRAWL_QUERIES_KO: readonly string[] = [
-  'UAE 투자',
-  '아부다비 경제',
-  '한국 UAE 협력',
-  'UAE 부동산',
-  'UAE 크립토',
-  'UAE AI',
-]
 
 const TWO_MONTHS_MS = 60 * 24 * 60 * 60 * 1000
 
@@ -47,26 +27,47 @@ const NewsItemCreateSchema = z.object({
   summary: z.string().optional(),
 })
 
+export const maxDuration = 55
 export const revalidate = 3600
 
 export async function GET(): Promise<NextResponse> {
   try {
-    const [googleResults, naverResults] = await Promise.allSettled([
-      crawlGoogleNews(CRAWL_QUERIES_EN),
-      crawlNaverNews(CRAWL_QUERIES_KO),
+    // Build lane-based query sets from keyword pack
+    const dealQueriesEn = NEWS_KEYWORD_PACK.google_news_rss_en.deal.always_on
+    const macroQueriesEn = NEWS_KEYWORD_PACK.google_news_rss_en.macro.always_on
+    const dealQueriesKo = NEWS_KEYWORD_PACK.naver_search_ko.deal.always_on
+    const macroQueriesKo = NEWS_KEYWORD_PACK.naver_search_ko.macro.always_on
+
+    const [
+      googleDealResults,
+      googleMacroResults,
+      naverDealResults,
+      naverMacroResults,
+    ] = await Promise.allSettled([
+      crawlGoogleNews(dealQueriesEn, { lane: 'deal', resultCap: 5 }),
+      crawlGoogleNews(macroQueriesEn, { lane: 'macro', resultCap: 3 }),
+      crawlNaverNews(dealQueriesKo, { lane: 'deal', resultCap: 5 }),
+      crawlNaverNews(macroQueriesKo, { lane: 'macro', resultCap: 3 }),
     ])
 
     const allItems: NewsItem[] = []
 
-    if (googleResults.status === 'fulfilled') {
-      allItems.push(...googleResults.value)
+    if (googleDealResults.status === 'fulfilled') {
+      allItems.push(...googleDealResults.value)
+    }
+    if (googleMacroResults.status === 'fulfilled') {
+      allItems.push(...googleMacroResults.value)
+    }
+    if (naverDealResults.status === 'fulfilled') {
+      allItems.push(...naverDealResults.value)
+    }
+    if (naverMacroResults.status === 'fulfilled') {
+      allItems.push(...naverMacroResults.value)
     }
 
-    if (naverResults.status === 'fulfilled') {
-      allItems.push(...naverResults.value)
-    }
-
-    const deduplicated = deduplicateNews(allItems)
+    // Apply noise filter before dedup
+    const cleaned = filterNoise(allItems)
+    const deduplicated = deduplicateNews(cleaned)
     const tagged = tagNewsBatch(deduplicated, ALL_KEYWORDS)
     const filtered = filterByDate(tagged)
 

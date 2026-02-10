@@ -1,4 +1,4 @@
-import type { NewsItem } from '@/types/news'
+import type { NewsItem, NewsLane } from '@/types/news'
 
 const GOOGLE_NEWS_RSS_BASE = 'https://news.google.com/rss/search'
 const NAVER_NEWS_API_BASE = 'https://openapi.naver.com/v1/search/news.json'
@@ -321,7 +321,15 @@ export async function enrichWithImages(items: NewsItem[]): Promise<NewsItem[]> {
   return enrichedItems
 }
 
-export async function crawlGoogleNews(keywords: readonly string[], locale: 'en' | 'ko' = 'en'): Promise<readonly NewsItem[]> {
+export async function crawlGoogleNews(
+  keywords: readonly string[],
+  options: {
+    readonly locale?: 'en' | 'ko'
+    readonly resultCap?: number
+    readonly lane?: NewsLane
+  } = {},
+): Promise<readonly NewsItem[]> {
+  const { locale = 'en', resultCap = 5, lane } = options
   const results: NewsItem[] = []
 
   // Determine locale settings
@@ -348,16 +356,17 @@ export async function crawlGoogleNews(keywords: readonly string[], locale: 'en' 
       const xmlText = await response.text()
       const rssItems = parseRssItems(xmlText)
 
-      const newsItems: readonly NewsItem[] = rssItems.slice(0, 5).map((item) => ({
+      const newsItems: readonly NewsItem[] = rssItems.slice(0, resultCap).map((item) => ({
         id: generateId(),
         title: item.title,
         url: item.link,
         source: 'google' as const,
         publisher: extractPublisher(item.source),
         publishedAt: parseRssDate(item.pubDate),
-        tags: [keyword],
+        tags: lane ? [keyword, `lane:${lane}`] : [keyword],
         priority: classifyPriority(item.source),
         ...(item.imageUrl ? { imageUrl: item.imageUrl } : {}),
+        ...(lane ? { lane } : {}),
       }))
 
       results.push(...newsItems)
@@ -369,7 +378,14 @@ export async function crawlGoogleNews(keywords: readonly string[], locale: 'en' 
   return results
 }
 
-export async function crawlNaverNews(keywords: readonly string[]): Promise<readonly NewsItem[]> {
+export async function crawlNaverNews(
+  keywords: readonly string[],
+  options: {
+    readonly resultCap?: number
+    readonly lane?: NewsLane
+  } = {},
+): Promise<readonly NewsItem[]> {
+  const { resultCap = 5, lane } = options
   const clientId = process.env.NAVER_CLIENT_ID
   const clientSecret = process.env.NAVER_CLIENT_SECRET
 
@@ -382,7 +398,7 @@ export async function crawlNaverNews(keywords: readonly string[]): Promise<reado
   for (const keyword of keywords) {
     try {
       const encodedQuery = encodeURIComponent(keyword)
-      const url = `${NAVER_NEWS_API_BASE}?query=${encodedQuery}&display=5&sort=date`
+      const url = `${NAVER_NEWS_API_BASE}?query=${encodedQuery}&display=${resultCap}&sort=date`
 
       const response = await fetch(url, {
         headers: {
@@ -413,9 +429,10 @@ export async function crawlNaverNews(keywords: readonly string[]): Promise<reado
         source: 'naver' as const,
         publisher: 'Naver News',
         publishedAt: parseRssDate(item.pubDate),
-        tags: [keyword],
+        tags: lane ? [keyword, `lane:${lane}`] : [keyword],
         summary: item.description.replace(/<[^>]*>/g, '').replace(/&quot;/g, '"').replace(/&amp;/g, '&'),
         priority: 'other' as const,
+        ...(lane ? { lane } : {}),
       }))
 
       results.push(...newsItems)
