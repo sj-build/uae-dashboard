@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 
 // ─── Types ───────────────────────────────────────────────
 interface Place {
@@ -105,7 +105,10 @@ function PlaceDetailPanel({
   useEffect(() => {
     setLoading(true)
     fetch(`/api/places/${slug}`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        return res.json()
+      })
       .then((data) => {
         setPlace(data.place ?? null)
         setNews(data.relatedNews ?? [])
@@ -113,6 +116,14 @@ function PlaceDetailPanel({
       .catch(() => setPlace(null))
       .finally(() => setLoading(false))
   }, [slug])
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
+  }, [onClose])
 
   if (loading) {
     return (
@@ -374,7 +385,15 @@ export default function PlacesPage() {
   const [city, setCity] = useState<City>('abudhabi')
   const [category, setCategory] = useState<Category>('all')
   const [search, setSearch] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null)
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(null)
+
+  // Debounce search input (300ms)
+  useEffect(() => {
+    debounceRef.current = setTimeout(() => setDebouncedSearch(search), 300)
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current) }
+  }, [search])
 
   const fetchPlaces = useCallback(async () => {
     setLoading(true)
@@ -382,7 +401,7 @@ export default function PlacesPage() {
       const params = new URLSearchParams()
       params.set('city', city)
       if (category !== 'all') params.set('category', category)
-      if (search) params.set('q', search)
+      if (debouncedSearch) params.set('q', debouncedSearch)
 
       const res = await fetch(`/api/places?${params}`)
       const data = await res.json()
@@ -392,14 +411,11 @@ export default function PlacesPage() {
     } finally {
       setLoading(false)
     }
-  }, [city, category, search])
+  }, [city, category, debouncedSearch])
 
   useEffect(() => {
     fetchPlaces()
   }, [fetchPlaces])
-
-  const abuDhabiCount = places.length
-  const dubaiPlaceholder = city === 'dubai'
 
   return (
     <div>
