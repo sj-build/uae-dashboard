@@ -41,23 +41,23 @@ interface RelatedNews {
 type City = 'abudhabi' | 'dubai'
 type Category = 'all' | 'business' | 'finance' | 'culture' | 'residential' | 'leisure' | 'industrial' | 'government'
 
-// ─── Photo URLs (Unsplash, free to use) ───────────────────
+// ─── Photo URLs (Unsplash, free to use — all verified 200) ──
 const PLACE_IMAGES: Record<string, string> = {
-  'saadiyat-island': 'https://images.unsplash.com/photo-1741286422969-53dc5ece0f10?w=600&h=340&fit=crop&q=80',
-  'al-maryah-island': 'https://images.unsplash.com/photo-1697730217428-fa63a4efa669?w=600&h=340&fit=crop&q=80',
-  'downtown-corniche': 'https://images.unsplash.com/photo-1624317937315-0ced8736c9e9?w=600&h=340&fit=crop&q=80',
-  'yas-island': 'https://images.unsplash.com/photo-1578152882785-df9744e359e5?w=600&h=340&fit=crop&q=80',
-  'al-reem-island': 'https://images.unsplash.com/photo-1697730217428-fa63a4efa669?w=600&h=340&fit=crop&q=80&crop=bottom',
-  'masdar-city': 'https://images.unsplash.com/photo-1624317937315-0ced8736c9e9?w=600&h=340&fit=crop&q=80&crop=left',
-  'kizad': 'https://images.unsplash.com/photo-1624317937315-0ced8736c9e9?w=600&h=340&fit=crop&q=80&crop=right',
-  'difc': 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&h=340&fit=crop&q=80',
-  'downtown-dubai': 'https://images.unsplash.com/photo-1748373448914-1d7f882700e2?w=600&h=340&fit=crop&q=80',
-  'business-bay': 'https://images.unsplash.com/photo-1697729914552-368899dc4757?w=600&h=340&fit=crop&q=80',
-  'dubai-marina': 'https://images.unsplash.com/photo-1590264539175-39df72442833?w=600&h=340&fit=crop&q=80',
-  'jlt': 'https://images.unsplash.com/photo-1650435331422-7a806b2b02c6?w=600&h=340&fit=crop&q=80',
-  'internet-city-media-city': 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&h=340&fit=crop&q=80&crop=center',
-  'deira-old-dubai': 'https://images.unsplash.com/photo-1697729983477-345d7407a0d3?w=600&h=340&fit=crop&q=80',
-  'dubai-south': 'https://images.unsplash.com/photo-1697729914552-368899dc4757?w=600&h=340&fit=crop&q=80&crop=bottom',
+  'saadiyat-island': 'https://images.unsplash.com/photo-1578946956088-940c3b502864?w=600&h=340&fit=crop&q=80',
+  'al-maryah-island': 'https://images.unsplash.com/photo-1587614313085-5da51cebd8ac?w=600&h=340&fit=crop&q=80',
+  'downtown-corniche': 'https://images.unsplash.com/photo-1580674684081-7617fbf3d745?w=600&h=340&fit=crop&q=80',
+  'yas-island': 'https://images.unsplash.com/photo-1605101100278-5d1deb2b6498?w=600&h=340&fit=crop&q=80',
+  'al-reem-island': 'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=600&h=340&fit=crop&q=80',
+  'masdar-city': 'https://images.unsplash.com/photo-1597659840241-37e2b9c2f55f?w=600&h=340&fit=crop&q=80',
+  'kizad': 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600&h=340&fit=crop&q=80',
+  'difc': 'https://images.unsplash.com/photo-1582672060674-bc2bd808a8b5?w=600&h=340&fit=crop&q=80',
+  'downtown-dubai': 'https://images.unsplash.com/photo-1512632578888-169bbbc64f33?w=600&h=340&fit=crop&q=80',
+  'business-bay': 'https://images.unsplash.com/photo-1529655683826-aba9b3e77383?w=600&h=340&fit=crop&q=80',
+  'dubai-marina': 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=600&h=340&fit=crop&q=80',
+  'jlt': 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=600&h=340&fit=crop&q=80',
+  'internet-city-media-city': 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&h=340&fit=crop&q=80',
+  'deira-old-dubai': 'https://images.unsplash.com/photo-1565967511849-76a60a516170?w=600&h=340&fit=crop&q=80',
+  'dubai-south': 'https://images.unsplash.com/photo-1564769625905-50e93615e769?w=600&h=340&fit=crop&q=80',
 }
 
 // ─── Constants ───────────────────────────────────────────

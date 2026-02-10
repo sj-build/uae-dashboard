@@ -60,10 +60,12 @@ export function AskMeHero({ onOpenSearch, onQuickQuestion }: AskMeHeroProps) {
   const quickQuestions = locale === 'en' ? QUICK_QUESTIONS_EN : QUICK_QUESTIONS_KO
   const tips = locale === 'en' ? UAE_TIPS_EN : UAE_TIPS_KO
 
-  // Get tip based on day of year for consistency
+  // Rotate tip 3x daily (every ~8 hours)
   const todaysTip = useMemo(() => {
-    const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000)
-    return tips[dayOfYear % tips.length]
+    const now = new Date()
+    const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000)
+    const slot = Math.floor(now.getHours() / 8) // 0, 1, or 2
+    return tips[(dayOfYear * 3 + slot) % tips.length]
   }, [tips])
 
   const handleFocus = useCallback(() => {

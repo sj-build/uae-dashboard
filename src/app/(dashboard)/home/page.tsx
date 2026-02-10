@@ -32,12 +32,12 @@ export default function HomePage() {
 
       <QuickStart />
 
-      {/* Section Order: UAE Now → Opportunities/Risks → News */}
+      {/* Section Order: News (top) → UAE Now → Opportunities/Risks */}
+      <NewsHeadlines />
+
       <UAENowSection />
 
       <OpportunityRiskSummary />
-
-      <NewsHeadlines />
 
       <SearchModal isOpen={isSearchOpen} onClose={handleCloseSearch} initialQuery={initialQuery} />
     </>

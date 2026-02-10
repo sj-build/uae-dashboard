@@ -14,45 +14,37 @@ interface NewsApiResponse {
   readonly error?: string
 }
 
-// Category configuration with colors and placeholder images
-const CATEGORY_CONFIG: Record<string, {
-  label: string
-  labelEn: string
-  gradient: string
-  icon: string
-  keywords: readonly string[]
-}> = {
-  politics: {
-    label: '정치',
-    labelEn: 'Politics',
-    gradient: 'from-indigo-600 to-purple-700',
-    icon: '🏛️',
-    keywords: ['정치', '외교', '왕족', '핵심인물', '지정학', 'diplomatic', 'political', 'royal', 'government'],
-  },
-  economy: {
-    label: '경제',
-    labelEn: 'Economy',
-    gradient: 'from-emerald-600 to-teal-700',
-    icon: '📈',
-    keywords: ['경제', '금융', '투자', '국부펀드', '거시경제', 'economy', 'finance', 'investment', 'fund'],
-  },
-  society: {
-    label: '사회/문화',
-    labelEn: 'Society',
-    gradient: 'from-rose-600 to-pink-700',
-    icon: '🎭',
-    keywords: ['사회', '문화', '관광', '부동산', 'society', 'culture', 'tourism', 'real estate'],
-  },
-  korea: {
-    label: 'UAE-한국',
-    labelEn: 'UAE-Korea',
-    gradient: 'from-blue-600 to-cyan-700',
-    icon: '🇰🇷',
-    keywords: ['한국', 'Korea', 'Korean', 'K-', 'Hyundai', 'Samsung', 'LG', 'Hanwha', 'KEPCO', 'Seoul'],
-  },
+const KOREA_KEYWORDS = [
+  '한국', 'korea', 'korean', 'k-', 'hyundai', 'samsung', 'lg', 'hanwha',
+  'kepco', 'seoul', 'posco', 'sk ', 'cepa', '한-uae', 'uae-한국',
+  'korean air', 'naver', 'kakao', 'doosan', 'daewoo',
+] as const
+
+function isKoreaRelated(item: NewsItem): boolean {
+  const searchText = `${item.title} ${item.tags.join(' ')}`.toLowerCase()
+  return KOREA_KEYWORDS.some(kw => searchText.includes(kw.toLowerCase()))
 }
 
-const CATEGORY_ORDER = ['politics', 'economy', 'society', 'korea'] as const
+function splitNews(items: readonly NewsItem[]): {
+  uaeLocal: readonly NewsItem[]
+  uaeKorea: readonly NewsItem[]
+} {
+  const uaeKorea: NewsItem[] = []
+  const uaeLocal: NewsItem[] = []
+
+  for (const item of items) {
+    if (isKoreaRelated(item)) {
+      uaeKorea.push(item)
+    } else {
+      uaeLocal.push(item)
+    }
+  }
+
+  return {
+    uaeLocal: uaeLocal.slice(0, 4),
+    uaeKorea: uaeKorea.slice(0, 4),
+  }
+}
 
 function formatRelativeDate(
   dateString: string,
@@ -81,159 +73,45 @@ function formatRelativeDate(
   }
 }
 
-function categorizeNews(item: NewsItem): string {
-  const searchText = `${item.title} ${item.tags.join(' ')}`.toLowerCase()
+const IMPACT_CONFIG = {
+  high: { label: 'HIGH', labelKo: '높음', color: 'text-red-400' },
+  medium: { label: 'MED', labelKo: '중간', color: 'text-yellow-400' },
+  low: { label: 'LOW', labelKo: '낮음', color: 'text-gray-400' },
+} as const
 
-  for (const [category, config] of Object.entries(CATEGORY_CONFIG)) {
-    for (const keyword of config.keywords) {
-      if (searchText.includes(keyword.toLowerCase())) {
-        return category
-      }
-    }
-  }
-
-  return 'economy' // default
-}
-
-function selectNewsPerCategory(items: readonly NewsItem[]): Record<string, NewsItem | null> {
-  const result: Record<string, NewsItem | null> = {
-    politics: null,
-    economy: null,
-    society: null,
-    korea: null,
-  }
-
-  const categorized = items.map(item => ({
-    item,
-    category: categorizeNews(item),
-  }))
-
-  // First pass: assign news to each category
-  for (const { item, category } of categorized) {
-    if (result[category] === null) {
-      result[category] = item
-    }
-  }
-
-  // Second pass: fill empty categories with remaining news
-  const usedIds = new Set(Object.values(result).filter(Boolean).map(item => item!.id))
-  const remaining = items.filter(item => !usedIds.has(item.id))
-
-  for (const category of CATEGORY_ORDER) {
-    if (result[category] === null && remaining.length > 0) {
-      result[category] = remaining.shift()!
-    }
-  }
-
-  return result
-}
-
-function NewsGridSkeleton() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="flex gap-4 animate-pulse">
-          <div className="w-[120px] h-[80px] bg-bg4 rounded-lg shrink-0" />
-          <div className="flex-1 space-y-2 py-1">
-            <div className="h-4 bg-bg4 rounded w-full" />
-            <div className="h-4 bg-bg4 rounded w-3/4" />
-            <div className="h-3 bg-bg4 rounded w-1/3" />
-          </div>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-interface NewsGridItemProps {
+interface NewsListItemProps {
   readonly item: NewsItem
-  readonly category: string
   readonly p: Translations['pages']['home']
   readonly locale: 'ko' | 'en'
 }
 
-const IMPACT_CONFIG = {
-  high: { label: 'HIGH', labelKo: '높음', color: 'bg-red-500/20 text-red-400 border-red-500/30' },
-  medium: { label: 'MED', labelKo: '중간', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
-  low: { label: 'LOW', labelKo: '낮음', color: 'bg-gray-500/20 text-gray-400 border-gray-500/30' },
-}
-
-const SECTION_ROUTES: Record<string, string> = {
-  politics: '/politics',
-  economy: '/economy',
-  society: '/society',
-  korea: '/comparison',
-  industry: '/industry',
-  legal: '/legal',
-}
-
-function NewsGridItem({ item, category, p, locale }: NewsGridItemProps) {
-  const config = CATEGORY_CONFIG[category]
+function NewsListItem({ item, p, locale }: NewsListItemProps) {
   const impact = item.impact || 'medium'
   const impactConfig = IMPACT_CONFIG[impact]
-  const relatedSection = item.relatedSection || SECTION_ROUTES[category] || '/news'
   const summary = locale === 'ko' ? (item.summaryKo || item.summary) : item.summary
-  // Check for valid image URL (only exclude known broken patterns)
-  const isPlaceholder = item.imageUrl?.includes('google.com/images/branding')
-  const hasImage = item.imageUrl && item.imageUrl.startsWith('http') && !isPlaceholder
 
   return (
-    <div className="flex gap-3 group bg-bg3/40 rounded-lg p-3 border border-brd/30 hover:border-gold/30 transition-colors">
-      {/* Article Image or Category Icon */}
-      <div className={`${hasImage ? 'w-[100px] h-[70px]' : 'w-[56px] h-[56px]'} shrink-0 rounded-lg overflow-hidden`}>
-        {hasImage ? (
-          <img
-            src={item.imageUrl}
-            alt=""
-            className="w-full h-full object-cover"
-            loading="lazy"
-            onError={(e) => {
-              // Fallback to icon on image load error
-              const target = e.currentTarget
-              target.style.display = 'none'
-              target.parentElement!.innerHTML = `<div class="w-full h-full bg-gradient-to-br ${config.gradient} flex items-center justify-center"><span class="text-2xl">${config.icon}</span></div>`
-            }}
-          />
-        ) : (
-          <div className={`w-full h-full bg-gradient-to-br ${config.gradient} flex items-center justify-center`}>
-            <span className="text-2xl">{config.icon}</span>
-          </div>
-        )}
-      </div>
-
-      {/* Content */}
-      <div className="flex-1 min-w-0">
-        {/* Header: Category + Impact */}
-        <div className="flex items-center gap-2 mb-1">
-          <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold bg-gradient-to-r ${config.gradient} text-white`}>
-            {locale === 'en' ? config.labelEn : config.label}
-          </span>
-          <span className={`px-1.5 py-0.5 rounded text-[9px] font-semibold border ${impactConfig.color}`}>
-            {locale === 'en' ? impactConfig.label : impactConfig.labelKo}
-          </span>
-        </div>
-
-        {/* Title */}
-        <a
-          href={item.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block"
-        >
-          <h3 className="text-[12px] text-t1 font-medium leading-snug line-clamp-2 group-hover:text-gold transition-colors">
-            {item.title}
-          </h3>
-        </a>
-
-        {/* Summary (if available) */}
-        {summary && (
-          <p className="text-[10px] text-t3 mt-1 line-clamp-1">{summary}</p>
-        )}
-
-        {/* Footer: Publisher + Date + Related Section */}
-        <div className="flex items-center justify-between mt-2">
-          <div className="flex items-center gap-1.5">
-            <span className="text-[9px] text-t4/60 truncate max-w-[80px]">
+    <div className="group py-2.5 border-b border-brd/20 last:border-b-0">
+      <div className="flex items-start gap-2">
+        <span className={`text-[9px] font-bold mt-0.5 shrink-0 ${impactConfig.color}`}>
+          {locale === 'en' ? impactConfig.label : impactConfig.labelKo}
+        </span>
+        <div className="flex-1 min-w-0">
+          <a
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block"
+          >
+            <h3 className="text-[12px] text-t1 font-medium leading-snug line-clamp-2 group-hover:text-gold transition-colors">
+              {item.title}
+            </h3>
+          </a>
+          {summary && (
+            <p className="text-[10px] text-t3 mt-0.5 line-clamp-1">{summary}</p>
+          )}
+          <div className="flex items-center gap-1.5 mt-1">
+            <span className="text-[9px] text-t4/60 truncate max-w-[100px]">
               {item.publisher}
             </span>
             <span className="text-t4/40">·</span>
@@ -241,14 +119,22 @@ function NewsGridItem({ item, category, p, locale }: NewsGridItemProps) {
               {formatRelativeDate(item.publishedAt, p, locale)}
             </span>
           </div>
-          <Link
-            href={relatedSection}
-            className="text-[9px] text-t4 hover:text-gold transition-colors"
-          >
-            {locale === 'en' ? 'Related' : '관련'} →
-          </Link>
         </div>
       </div>
+    </div>
+  )
+}
+
+function NewsColumnSkeleton() {
+  return (
+    <div className="space-y-3">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div key={i} className="animate-pulse space-y-1.5 py-2">
+          <div className="h-3.5 bg-bg4 rounded w-full" />
+          <div className="h-3.5 bg-bg4 rounded w-3/4" />
+          <div className="h-2.5 bg-bg4 rounded w-1/3" />
+        </div>
+      ))}
     </div>
   )
 }
@@ -312,10 +198,8 @@ export function NewsHeadlines() {
     fetchNews()
   }, [fetchNews])
 
-  const categorizedNews = selectNewsPerCategory(newsItems)
-  const displayNews = CATEGORY_ORDER
-    .map(cat => ({ category: cat, item: categorizedNews[cat] }))
-    .filter(({ item }) => item !== null) as Array<{ category: string; item: NewsItem }>
+  const { uaeLocal, uaeKorea } = splitNews(newsItems)
+  const totalCount = uaeLocal.length + uaeKorea.length
 
   const headerContent = (
     <div className="flex items-center gap-3 flex-1">
@@ -330,9 +214,9 @@ export function NewsHeadlines() {
           asOf={new Date().toISOString().slice(0, 10)}
           compact
         />
-        {!isLoading && !error && displayNews.length > 0 && (
+        {!isLoading && !error && totalCount > 0 && (
           <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-gold/10 text-gold border border-gold/20">
-            {displayNews.length}{p.newsCount}
+            {totalCount}{p.newsCount}
           </span>
         )}
       </div>
@@ -341,28 +225,67 @@ export function NewsHeadlines() {
 
   return (
     <Collapsible header={headerContent} defaultOpen>
-      {isLoading && <NewsGridSkeleton />}
+      {isLoading && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <NewsColumnSkeleton />
+          <NewsColumnSkeleton />
+        </div>
+      )}
 
       {error && <ErrorDisplay message={error} onRetry={fetchNews} retryLabel={p.newsRetry} />}
 
-      {!isLoading && !error && displayNews.length === 0 && (
+      {!isLoading && !error && totalCount === 0 && (
         <div className="text-center py-6 text-[13px] text-t3">
           {p.newsEmpty}
         </div>
       )}
 
-      {!isLoading && !error && displayNews.length > 0 && (
+      {!isLoading && !error && totalCount > 0 && (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {displayNews.map(({ category, item }) => (
-              <NewsGridItem
-                key={item.id}
-                item={item}
-                category={category}
-                p={p}
-                locale={locale}
-              />
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* UAE Local News */}
+            <div>
+              <div className="flex items-center gap-2 mb-3 pb-2 border-b border-brd/40">
+                <span className="text-sm">🇦🇪</span>
+                <h3 className="text-[13px] font-bold text-t1">
+                  {locale === 'en' ? 'UAE News' : 'UAE 현지 뉴스'}
+                </h3>
+                <span className="text-[10px] text-t4 ml-auto">
+                  {uaeLocal.length}{locale === 'en' ? ' articles' : '건'}
+                </span>
+              </div>
+              {uaeLocal.length > 0 ? (
+                uaeLocal.map(item => (
+                  <NewsListItem key={item.id} item={item} p={p} locale={locale} />
+                ))
+              ) : (
+                <p className="text-[11px] text-t4 py-4 text-center">
+                  {locale === 'en' ? 'No UAE news' : 'UAE 뉴스 없음'}
+                </p>
+              )}
+            </div>
+
+            {/* UAE-Korea News */}
+            <div>
+              <div className="flex items-center gap-2 mb-3 pb-2 border-b border-brd/40">
+                <span className="text-sm">🇰🇷</span>
+                <h3 className="text-[13px] font-bold text-t1">
+                  {locale === 'en' ? 'UAE-Korea' : 'UAE-한국 협력'}
+                </h3>
+                <span className="text-[10px] text-t4 ml-auto">
+                  {uaeKorea.length}{locale === 'en' ? ' articles' : '건'}
+                </span>
+              </div>
+              {uaeKorea.length > 0 ? (
+                uaeKorea.map(item => (
+                  <NewsListItem key={item.id} item={item} p={p} locale={locale} />
+                ))
+              ) : (
+                <p className="text-[11px] text-t4 py-4 text-center">
+                  {locale === 'en' ? 'No Korea-related news' : '한국 관련 뉴스 없음'}
+                </p>
+              )}
+            </div>
           </div>
 
           <div className="pt-4 mt-4 border-t border-brd/30 flex justify-center">
