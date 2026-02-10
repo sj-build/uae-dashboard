@@ -57,6 +57,8 @@ export interface EvalIssue {
   suggested_fix: string | null
   suggested_patch: Record<string, unknown> | null
   references: Array<{ url: string; snippet?: string; source?: string }>
+  approved_at: string | null
+  approved_by: string | null
   created_at: string
   updated_at: string
 }
@@ -77,12 +79,28 @@ export interface ExtractedClaim {
   current_text: string
 }
 
+export interface SuggestedPatch {
+  field: string
+  old_value: string
+  new_value: string
+  as_of: string
+}
+
 export interface VerificationResult {
   verdict: Verdict
   severity: Severity
   confidence: number
   references: Array<{ url: string; snippet?: string; source?: string }>
   suggested_fix: string | null
+  suggested_patch: SuggestedPatch | null
+}
+
+export interface ApplyFixResult {
+  success: boolean
+  applied_to: ObjectType
+  target_id: string | null
+  action: 'updated_document' | 'updated_insight' | 'created_insight' | 'created_document'
+  details: string
 }
 
 export interface EvalRunOptions {

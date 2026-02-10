@@ -82,7 +82,7 @@ async function updateEvalRun(
 /**
  * Create eval issue record
  */
-async function createEvalIssue(issue: Omit<EvalIssue, 'id' | 'created_at' | 'updated_at'>): Promise<string> {
+async function createEvalIssue(issue: Omit<EvalIssue, 'id' | 'created_at' | 'updated_at' | 'approved_at' | 'approved_by'>): Promise<string> {
   const supabase = getSupabaseAdmin()
 
   const { data, error } = await supabase.from('eval_issues').insert(issue).select('id').single()
@@ -272,7 +272,7 @@ async function runWeeklyFactcheck(runId: string, scope: Record<string, unknown>)
         confidence: result.confidence,
         current_text: claim.current_text,
         suggested_fix: result.suggested_fix,
-        suggested_patch: null,
+        suggested_patch: result.suggested_patch as Record<string, unknown> | null,
         references: result.references,
       })
       issueCount++

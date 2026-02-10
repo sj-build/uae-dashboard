@@ -5,7 +5,7 @@
  */
 
 import { getAnthropicClient } from '@/lib/anthropic'
-import type { ExtractedClaim, VerificationResult, Verdict, SourceRegistry } from './types'
+import type { ExtractedClaim, VerificationResult, Verdict, SuggestedPatch, SourceRegistry } from './types'
 import { determineSeverity } from './rules-checker'
 
 const VERIFICATION_PROMPT = `You are an expert fact-checker verifying claims about UAE.
@@ -29,8 +29,23 @@ Response format (JSON only):
   "references": [
     {"url": "source_url", "snippet": "relevant quote", "source": "source name"}
   ],
-  "suggested_fix": "Corrected statement if needs_update or contradicted, null otherwise"
+  "suggested_fix": "The COMPLETE corrected sentence with specific numbers, dates, and policy names. NOT vague like 'update needed'. Example: 'UAE corporate tax rate is 9% (effective June 2023)'",
+  "suggested_patch": {
+    "field": "the data field being corrected, e.g. 'corporateTaxRate'",
+    "old_value": "the current incorrect value, e.g. '5%'",
+    "new_value": "the correct updated value, e.g. '9%'",
+    "as_of": "effective date in YYYY or YYYY-MM format, e.g. '2023-06'"
+  }
 }
+
+CRITICAL rules for suggested_fix and suggested_patch:
+- When verdict is "needs_update" or "contradicted", you MUST provide BOTH suggested_fix AND suggested_patch
+- suggested_fix must be a COMPLETE replacement sentence ready to use as-is, with specific numbers/dates/names
+- suggested_patch.old_value must match the current incorrect data
+- suggested_patch.new_value must contain the authoritative corrected data
+- suggested_patch.as_of must indicate when this data became effective
+- Do NOT write vague fixes like "needs to be updated" or "check latest data"
+- When verdict is "supported" or "unverifiable", set both to null
 
 Important:
 - Trust official UAE government sources (u.ae, ministries) most highly
@@ -94,6 +109,7 @@ Provide your verification result as JSON.`
         confidence: 0.3,
         references: [],
         suggested_fix: null,
+        suggested_patch: null,
       }
     }
 
@@ -102,6 +118,7 @@ Provide your verification result as JSON.`
       confidence: number
       references: Array<{ url: string; snippet?: string; source?: string }>
       suggested_fix: string | null
+      suggested_patch: SuggestedPatch | null
     }
 
     // Validate and normalize
@@ -109,12 +126,19 @@ Provide your verification result as JSON.`
     const verdict = validVerdicts.includes(result.verdict) ? result.verdict : 'unverifiable'
     const confidence = Math.max(0, Math.min(1, result.confidence || 0.5))
 
+    // Validate suggested_patch structure
+    const patch = result.suggested_patch
+    const validPatch = patch && patch.field && patch.old_value && patch.new_value && patch.as_of
+      ? patch
+      : null
+
     return {
       verdict,
       severity: determineSeverity(context.claim, verdict),
       confidence,
       references: result.references || [],
       suggested_fix: result.suggested_fix || null,
+      suggested_patch: validPatch,
     }
   } catch (error) {
     console.error('Claim verification failed:', error)
@@ -124,6 +148,7 @@ Provide your verification result as JSON.`
       confidence: 0.1,
       references: [],
       suggested_fix: null,
+      suggested_patch: null,
     }
   }
 }
