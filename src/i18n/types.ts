@@ -128,6 +128,33 @@ export interface Translations {
       readonly essentialTitle: string
       readonly trendsTitle: string
     }
+    readonly places: {
+      readonly title: string
+      readonly subtitle: string
+      readonly searchPlaceholder: string
+      readonly noResults: string
+      readonly noResultsHint: string
+      readonly bestFor: string
+      readonly overview: string
+      readonly highlights: string
+      readonly practicalInfo: string
+      readonly access: string
+      readonly vibe: string
+      readonly meetings: string
+      readonly tips: string
+      readonly freeZone: string
+      readonly links: string
+      readonly relatedNews: string
+      readonly sources: string
+      readonly catAll: string
+      readonly catBusiness: string
+      readonly catFinance: string
+      readonly catCulture: string
+      readonly catResidential: string
+      readonly catLeisure: string
+      readonly catIndustrial: string
+      readonly catGovernment: string
+    }
     readonly industry: {
       readonly title: string
       readonly subtitle: string

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { useLocale } from '@/hooks/useLocale'
 
 // ─── Types ───────────────────────────────────────────────
 interface Place {
@@ -40,63 +41,75 @@ interface RelatedNews {
 type City = 'abudhabi' | 'dubai'
 type Category = 'all' | 'business' | 'finance' | 'culture' | 'residential' | 'leisure' | 'industrial' | 'government'
 
-// ─── Constants ───────────────────────────────────────────
-const CATEGORIES: { value: Category; label: string; icon: string }[] = [
-  { value: 'all', label: 'All', icon: '' },
-  { value: 'business', label: 'Business', icon: '💼' },
-  { value: 'finance', label: 'Finance', icon: '🏦' },
-  { value: 'culture', label: 'Culture', icon: '🎨' },
-  { value: 'residential', label: 'Residential', icon: '🏠' },
-  { value: 'leisure', label: 'Leisure', icon: '🎢' },
-  { value: 'industrial', label: 'Industrial', icon: '🏗️' },
-  { value: 'government', label: 'Government', icon: '🏛️' },
-]
+// ─── Photo URLs (Unsplash, free to use) ───────────────────
+const PLACE_IMAGES: Record<string, string> = {
+  'saadiyat-island': 'https://images.unsplash.com/photo-1741286422969-53dc5ece0f10?w=600&h=340&fit=crop&q=80',
+  'al-maryah-island': 'https://images.unsplash.com/photo-1697730217428-fa63a4efa669?w=600&h=340&fit=crop&q=80',
+  'downtown-corniche': 'https://images.unsplash.com/photo-1624317937315-0ced8736c9e9?w=600&h=340&fit=crop&q=80',
+  'yas-island': 'https://images.unsplash.com/photo-1578152882785-df9744e359e5?w=600&h=340&fit=crop&q=80',
+  'al-reem-island': 'https://images.unsplash.com/photo-1697730217428-fa63a4efa669?w=600&h=340&fit=crop&q=80&crop=bottom',
+  'masdar-city': 'https://images.unsplash.com/photo-1624317937315-0ced8736c9e9?w=600&h=340&fit=crop&q=80&crop=left',
+  'kizad': 'https://images.unsplash.com/photo-1624317937315-0ced8736c9e9?w=600&h=340&fit=crop&q=80&crop=right',
+  'difc': 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&h=340&fit=crop&q=80',
+  'downtown-dubai': 'https://images.unsplash.com/photo-1748373448914-1d7f882700e2?w=600&h=340&fit=crop&q=80',
+  'business-bay': 'https://images.unsplash.com/photo-1697729914552-368899dc4757?w=600&h=340&fit=crop&q=80',
+  'dubai-marina': 'https://images.unsplash.com/photo-1590264539175-39df72442833?w=600&h=340&fit=crop&q=80',
+  'jlt': 'https://images.unsplash.com/photo-1650435331422-7a806b2b02c6?w=600&h=340&fit=crop&q=80',
+  'internet-city-media-city': 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&h=340&fit=crop&q=80&crop=center',
+  'deira-old-dubai': 'https://images.unsplash.com/photo-1697729983477-345d7407a0d3?w=600&h=340&fit=crop&q=80',
+  'dubai-south': 'https://images.unsplash.com/photo-1697729914552-368899dc4757?w=600&h=340&fit=crop&q=80&crop=bottom',
+}
 
-const BEST_FOR_LABELS: Record<string, string> = {
-  investor_meetings: '투자 미팅',
-  financial_services: '금융 서비스',
-  office_base: '오피스 거점',
-  cultural_tourism: '문화 관광',
-  luxury_living: '럭셔리 주거',
-  art_galleries: '아트 갤러리',
-  government_meetings: '정부 미팅',
-  local_life: '로컬 생활',
-  family_trip: '가족 여행',
-  entertainment: '엔터테인먼트',
-  events: '이벤트/공연',
-  expat_living: '주재원 생활',
-  affordable_option: '합리적 비용',
-  startup_hub: '스타트업',
-  sme_office: '중소기업 오피스',
-  cleantech: '클린테크',
-  innovation: '이노베이션',
-  sustainability: '지속가능성',
-  manufacturing: '제조업',
-  logistics: '물류',
-  supply_chain: '공급망',
-  fund_management: '펀드 관리',
-  legal_advisory: '법률 자문',
-  landmark_visit: '랜드마크',
-  luxury_shopping: '럭셔리 쇼핑',
-  business_meetings: '비즈니스 미팅',
-  beach_lifestyle: '비치 라이프스타일',
-  dining: '다이닝',
-  tech_companies: '테크 기업',
-  media_industry: '미디어 산업',
-  digital_startups: '디지털 스타트업',
-  traditional_trade: '전통 무역',
-  budget_shopping: '시장/쇼핑',
-  aviation: '항공',
-  expo_legacy: '엑스포',
+// ─── Constants ───────────────────────────────────────────
+const BEST_FOR_LABELS: Record<string, { ko: string; en: string }> = {
+  investor_meetings: { ko: '투자 미팅', en: 'Investor Meetings' },
+  financial_services: { ko: '금융 서비스', en: 'Financial Services' },
+  office_base: { ko: '오피스 거점', en: 'Office Base' },
+  cultural_tourism: { ko: '문화 관광', en: 'Cultural Tourism' },
+  luxury_living: { ko: '럭셔리 주거', en: 'Luxury Living' },
+  art_galleries: { ko: '아트 갤러리', en: 'Art Galleries' },
+  government_meetings: { ko: '정부 미팅', en: 'Government Meetings' },
+  local_life: { ko: '로컬 생활', en: 'Local Life' },
+  family_trip: { ko: '가족 여행', en: 'Family Trip' },
+  entertainment: { ko: '엔터테인먼트', en: 'Entertainment' },
+  events: { ko: '이벤트/공연', en: 'Events' },
+  expat_living: { ko: '주재원 생활', en: 'Expat Living' },
+  affordable_option: { ko: '합리적 비용', en: 'Affordable' },
+  startup_hub: { ko: '스타트업', en: 'Startup Hub' },
+  sme_office: { ko: '중소기업 오피스', en: 'SME Office' },
+  cleantech: { ko: '클린테크', en: 'Cleantech' },
+  innovation: { ko: '이노베이션', en: 'Innovation' },
+  sustainability: { ko: '지속가능성', en: 'Sustainability' },
+  manufacturing: { ko: '제조업', en: 'Manufacturing' },
+  logistics: { ko: '물류', en: 'Logistics' },
+  supply_chain: { ko: '공급망', en: 'Supply Chain' },
+  fund_management: { ko: '펀드 관리', en: 'Fund Mgmt' },
+  legal_advisory: { ko: '법률 자문', en: 'Legal Advisory' },
+  landmark_visit: { ko: '랜드마크', en: 'Landmarks' },
+  luxury_shopping: { ko: '럭셔리 쇼핑', en: 'Luxury Shopping' },
+  business_meetings: { ko: '비즈니스 미팅', en: 'Business Meetings' },
+  beach_lifestyle: { ko: '비치 라이프', en: 'Beach Life' },
+  dining: { ko: '다이닝', en: 'Dining' },
+  tech_companies: { ko: '테크 기업', en: 'Tech Companies' },
+  media_industry: { ko: '미디어', en: 'Media' },
+  digital_startups: { ko: '디지털 스타트업', en: 'Digital Startups' },
+  traditional_trade: { ko: '전통 무역', en: 'Traditional Trade' },
+  budget_shopping: { ko: '시장/쇼핑', en: 'Budget Shopping' },
+  aviation: { ko: '항공', en: 'Aviation' },
+  expo_legacy: { ko: '엑스포', en: 'Expo Legacy' },
 }
 
 // ─── Detail Panel ────────────────────────────────────────
 function PlaceDetailPanel({
   slug,
   onClose,
+  locale,
+  pt,
 }: {
   slug: string
   onClose: () => void
+  locale: 'ko' | 'en'
+  pt: ReturnType<typeof useLocale>['t']['pages']['places']
 }) {
   const [place, setPlace] = useState<PlaceDetail | null>(null)
   const [news, setNews] = useState<RelatedNews[]>([])
@@ -125,11 +138,15 @@ function PlaceDetailPanel({
     return () => document.removeEventListener('keydown', handler)
   }, [onClose])
 
+  const isKo = locale === 'ko'
+  const bestForLabel = (bf: string) => BEST_FOR_LABELS[bf]?.[locale] ?? bf
+
   if (loading) {
     return (
       <div className="fixed inset-0 z-50 bg-bg/80 backdrop-blur-sm flex items-start justify-end">
         <div className="w-full max-w-xl h-full bg-bg2 border-l border-brd overflow-y-auto p-6">
           <div className="animate-pulse space-y-4">
+            <div className="h-40 bg-bg3 rounded-xl" />
             <div className="h-6 bg-bg3 rounded w-3/4" />
             <div className="h-4 bg-bg3 rounded w-full" />
             <div className="h-4 bg-bg3 rounded w-2/3" />
@@ -142,6 +159,7 @@ function PlaceDetailPanel({
   if (!place) return null
 
   const fz = place.free_zone
+  const heroImage = PLACE_IMAGES[place.slug]
 
   return (
     <div className="fixed inset-0 z-50 bg-bg/60 backdrop-blur-sm flex items-start justify-end" onClick={onClose}>
@@ -149,32 +167,55 @@ function PlaceDetailPanel({
         className="w-full max-w-xl h-full bg-bg2 border-l border-brd overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Hero Image */}
+        {heroImage && (
+          <div className="relative h-48 overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={heroImage}
+              alt={place.name_en}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-bg2 via-bg2/30 to-transparent" />
+            <button
+              onClick={onClose}
+              className="absolute top-3 right-3 w-8 h-8 rounded-full bg-bg/70 backdrop-blur-sm text-t2 hover:text-t1 flex items-center justify-center text-sm"
+            >
+              x
+            </button>
+          </div>
+        )}
+
         {/* Header */}
-        <div className="sticky top-0 bg-bg2/95 backdrop-blur-md border-b border-brd p-5 flex items-center gap-3">
+        <div className={`${heroImage ? '-mt-12 relative z-10' : 'border-b border-brd'} p-5 flex items-center gap-3`}>
           <span className="text-3xl">{place.icon ?? '📍'}</span>
           <div className="flex-1 min-w-0">
-            <h2 className="font-display text-lg font-bold text-t1">{place.name_ko ?? place.name_en}</h2>
-            {place.name_ko && (
-              <p className="text-xs text-t3">{place.name_en}</p>
-            )}
+            <h2 className="font-display text-lg font-bold text-t1">
+              {isKo ? (place.name_ko ?? place.name_en) : place.name_en}
+            </h2>
+            <p className="text-xs text-t3">
+              {isKo ? place.name_en : (place.name_ko ?? '')}
+            </p>
           </div>
-          <button onClick={onClose} className="text-t4 hover:text-t1 text-xl px-2">x</button>
+          {!heroImage && (
+            <button onClick={onClose} className="text-t4 hover:text-t1 text-xl px-2">x</button>
+          )}
         </div>
 
         <div className="p-5 space-y-5">
           {/* Tagline */}
           <p className="text-sm text-t2 leading-relaxed">
-            {place.tagline_ko ?? place.tagline_en}
+            {isKo ? (place.tagline_ko ?? place.tagline_en) : (place.tagline_en ?? place.tagline_ko)}
           </p>
 
           {/* Best For */}
           {place.best_for.length > 0 && (
             <div>
-              <p className="text-[10px] text-t4 font-semibold uppercase tracking-wider mb-2">Best for</p>
+              <p className="text-[10px] text-t4 font-semibold uppercase tracking-wider mb-2">{pt.bestFor}</p>
               <div className="flex flex-wrap gap-1.5">
                 {place.best_for.map((bf) => (
                   <span key={bf} className="px-2.5 py-1 text-[11px] font-medium bg-gold/10 text-gold border border-gold/20 rounded-full">
-                    {BEST_FOR_LABELS[bf] ?? bf}
+                    {bestForLabel(bf)}
                   </span>
                 ))}
               </div>
@@ -184,9 +225,9 @@ function PlaceDetailPanel({
           {/* Description */}
           {(place.description_ko || place.description_en) && (
             <div>
-              <p className="text-[10px] text-t4 font-semibold uppercase tracking-wider mb-2">Overview</p>
+              <p className="text-[10px] text-t4 font-semibold uppercase tracking-wider mb-2">{pt.overview}</p>
               <p className="text-xs text-t2 leading-relaxed">
-                {place.description_ko ?? place.description_en}
+                {isKo ? (place.description_ko ?? place.description_en) : (place.description_en ?? place.description_ko)}
               </p>
             </div>
           )}
@@ -194,7 +235,7 @@ function PlaceDetailPanel({
           {/* Highlights */}
           {place.highlights.length > 0 && (
             <div>
-              <p className="text-[10px] text-t4 font-semibold uppercase tracking-wider mb-2">Key Highlights</p>
+              <p className="text-[10px] text-t4 font-semibold uppercase tracking-wider mb-2">{pt.highlights}</p>
               <div className="space-y-2">
                 {place.highlights.map((h, i) => (
                   <div key={i} className="flex gap-3 text-xs">
@@ -209,29 +250,29 @@ function PlaceDetailPanel({
           {/* Practical Info */}
           {place.practical && Object.keys(place.practical).length > 0 && (
             <div>
-              <p className="text-[10px] text-t4 font-semibold uppercase tracking-wider mb-2">Practical Info</p>
+              <p className="text-[10px] text-t4 font-semibold uppercase tracking-wider mb-2">{pt.practicalInfo}</p>
               <div className="bg-bg3 rounded-xl p-4 space-y-2.5 text-xs">
                 {place.practical.access && (
                   <div className="flex gap-2">
-                    <span className="text-t4 shrink-0 w-16">Access</span>
+                    <span className="text-t4 shrink-0 w-16">{pt.access}</span>
                     <span className="text-t2">{place.practical.access}</span>
                   </div>
                 )}
                 {place.practical.vibe && (
                   <div className="flex gap-2">
-                    <span className="text-t4 shrink-0 w-16">Vibe</span>
+                    <span className="text-t4 shrink-0 w-16">{pt.vibe}</span>
                     <span className="text-t2">{place.practical.vibe}</span>
                   </div>
                 )}
                 {place.practical.typical_meetings && (
                   <div className="flex gap-2">
-                    <span className="text-t4 shrink-0 w-16">Meetings</span>
+                    <span className="text-t4 shrink-0 w-16">{pt.meetings}</span>
                     <span className="text-t2">{place.practical.typical_meetings}</span>
                   </div>
                 )}
                 {place.practical.tips && (
                   <div className="flex gap-2">
-                    <span className="text-t4 shrink-0 w-16">Tips</span>
+                    <span className="text-t4 shrink-0 w-16">{pt.tips}</span>
                     <span className="text-gold">{place.practical.tips}</span>
                   </div>
                 )}
@@ -242,7 +283,7 @@ function PlaceDetailPanel({
           {/* Free Zone */}
           {fz?.is_free_zone && (
             <div className="bg-accent-blue/5 border border-accent-blue/20 rounded-xl p-4">
-              <p className="text-[10px] text-accent-blue font-bold uppercase tracking-wider mb-1">Free Zone</p>
+              <p className="text-[10px] text-accent-blue font-bold uppercase tracking-wider mb-1">{pt.freeZone}</p>
               <p className="text-sm font-semibold text-t1">{fz.name}</p>
               {fz.notes && <p className="text-xs text-t3 mt-1">{fz.notes}</p>}
             </div>
@@ -251,7 +292,7 @@ function PlaceDetailPanel({
           {/* Links */}
           {place.links.length > 0 && (
             <div>
-              <p className="text-[10px] text-t4 font-semibold uppercase tracking-wider mb-2">Links</p>
+              <p className="text-[10px] text-t4 font-semibold uppercase tracking-wider mb-2">{pt.links}</p>
               <div className="flex flex-wrap gap-2">
                 {place.links.map((link, i) => (
                   <a
@@ -271,7 +312,7 @@ function PlaceDetailPanel({
           {/* Related News */}
           {news.length > 0 && (
             <div>
-              <p className="text-[10px] text-t4 font-semibold uppercase tracking-wider mb-2">Related News</p>
+              <p className="text-[10px] text-t4 font-semibold uppercase tracking-wider mb-2">{pt.relatedNews}</p>
               <div className="space-y-2">
                 {news.map((article) => (
                   <a
@@ -284,7 +325,7 @@ function PlaceDetailPanel({
                     <p className="text-xs text-t1 font-medium line-clamp-2">{article.title}</p>
                     {article.published_at && (
                       <p className="text-[10px] text-t4 mt-1">
-                        {new Date(article.published_at).toLocaleDateString('ko-KR')}
+                        {new Date(article.published_at).toLocaleDateString(isKo ? 'ko-KR' : 'en-US')}
                       </p>
                     )}
                   </a>
@@ -296,7 +337,7 @@ function PlaceDetailPanel({
           {/* Sources */}
           {place.sources.length > 0 && (
             <div className="pt-3 border-t border-brd/50">
-              <p className="text-[10px] text-t4 mb-1">Sources</p>
+              <p className="text-[10px] text-t4 mb-1">{pt.sources}</p>
               <div className="flex flex-wrap gap-1">
                 {place.sources.map((s, i) => (
                   <a
@@ -322,57 +363,74 @@ function PlaceDetailPanel({
 function PlaceCard({
   place,
   onClick,
+  locale,
 }: {
   place: Place
   onClick: () => void
+  locale: 'ko' | 'en'
 }) {
   const fz = place.free_zone
   const hasFreeZone = fz?.is_free_zone
+  const isKo = locale === 'ko'
+  const heroImage = PLACE_IMAGES[place.slug]
+  const bestForLabel = (bf: string) => BEST_FOR_LABELS[bf]?.[locale] ?? bf
 
   return (
     <button
       onClick={onClick}
-      className="w-full text-left bg-bg2 border border-brd rounded-xl p-5 hover:border-gold/30 hover:shadow-[0_4px_20px_rgba(200,164,78,0.06)] transition-all duration-200 group"
+      className="w-full text-left bg-bg2 border border-brd rounded-xl overflow-hidden hover:border-gold/30 hover:shadow-[0_4px_20px_rgba(200,164,78,0.06)] transition-all duration-200 group"
     >
-      {/* Icon + Name */}
-      <div className="flex items-start gap-3 mb-3">
-        <span className="text-2xl mt-0.5">{place.icon ?? '📍'}</span>
-        <div className="flex-1 min-w-0">
-          <h3 className="font-display text-sm font-bold text-t1 group-hover:text-gold transition-colors">
-            {place.name_ko ?? place.name_en}
-          </h3>
-          {place.name_ko && (
-            <p className="text-[11px] text-t4 mt-0.5">{place.name_en}</p>
+      {/* Photo */}
+      {heroImage && (
+        <div className="relative h-36 overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={heroImage}
+            alt={place.name_en}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-bg2/90 via-transparent to-transparent" />
+          {hasFreeZone && (
+            <span className="absolute top-2 right-2 px-2 py-0.5 text-[9px] font-bold bg-accent-blue/90 text-white rounded backdrop-blur-sm">
+              FZ
+            </span>
           )}
         </div>
-        {hasFreeZone && (
-          <span className="shrink-0 px-2 py-0.5 text-[9px] font-bold bg-accent-blue/10 text-accent-blue border border-accent-blue/20 rounded">
-            FZ
-          </span>
-        )}
-      </div>
+      )}
 
-      {/* Tagline */}
-      <p className="text-xs text-t3 leading-relaxed mb-3 line-clamp-2">
-        {place.tagline_ko ?? place.tagline_en}
-      </p>
+      <div className="p-4">
+        {/* Icon + Name */}
+        <div className="flex items-start gap-2.5 mb-2">
+          <span className="text-xl mt-0.5">{place.icon ?? '📍'}</span>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-display text-sm font-bold text-t1 group-hover:text-gold transition-colors">
+              {isKo ? (place.name_ko ?? place.name_en) : place.name_en}
+            </h3>
+            <p className="text-[11px] text-t4 mt-0.5">
+              {isKo ? place.name_en : (place.name_ko ?? '')}
+            </p>
+          </div>
+          {!heroImage && hasFreeZone && (
+            <span className="shrink-0 px-2 py-0.5 text-[9px] font-bold bg-accent-blue/10 text-accent-blue border border-accent-blue/20 rounded">
+              FZ
+            </span>
+          )}
+        </div>
 
-      {/* Categories */}
-      <div className="flex flex-wrap gap-1 mb-3">
-        {place.categories.slice(0, 3).map((cat) => (
-          <span key={cat} className="px-2 py-0.5 text-[10px] font-medium bg-bg3 text-t3 rounded-full border border-brd">
-            {cat}
-          </span>
-        ))}
-      </div>
+        {/* Tagline */}
+        <p className="text-xs text-t3 leading-relaxed mb-3 line-clamp-2">
+          {isKo ? (place.tagline_ko ?? place.tagline_en) : (place.tagline_en ?? place.tagline_ko)}
+        </p>
 
-      {/* Best For (2-3 items) */}
-      <div className="flex flex-wrap gap-1">
-        {place.best_for.slice(0, 3).map((bf) => (
-          <span key={bf} className="text-[10px] text-gold/70">
-            {BEST_FOR_LABELS[bf] ?? bf}
-          </span>
-        ))}
+        {/* Best For (2-3 items) */}
+        <div className="flex flex-wrap gap-1">
+          {place.best_for.slice(0, 3).map((bf) => (
+            <span key={bf} className="px-2 py-0.5 text-[10px] font-medium bg-gold/8 text-gold/80 rounded-full">
+              {bestForLabel(bf)}
+            </span>
+          ))}
+        </div>
       </div>
     </button>
   )
@@ -380,6 +438,8 @@ function PlaceCard({
 
 // ─── Main Page ───────────────────────────────────────────
 export default function PlacesPage() {
+  const { t, locale } = useLocale()
+  const pt = t.pages.places
   const [places, setPlaces] = useState<Place[]>([])
   const [loading, setLoading] = useState(true)
   const [city, setCity] = useState<City>('abudhabi')
@@ -388,6 +448,22 @@ export default function PlacesPage() {
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(null)
+
+  const CATEGORIES: { value: Category; labelKey: keyof typeof pt }[] = [
+    { value: 'all', labelKey: 'catAll' },
+    { value: 'business', labelKey: 'catBusiness' },
+    { value: 'finance', labelKey: 'catFinance' },
+    { value: 'culture', labelKey: 'catCulture' },
+    { value: 'residential', labelKey: 'catResidential' },
+    { value: 'leisure', labelKey: 'catLeisure' },
+    { value: 'industrial', labelKey: 'catIndustrial' },
+    { value: 'government', labelKey: 'catGovernment' },
+  ]
+
+  const CAT_ICONS: Record<string, string> = {
+    business: '💼', finance: '🏦', culture: '🎨', residential: '🏠',
+    leisure: '🎢', industrial: '🏗️', government: '🏛️',
+  }
 
   // Debounce search input (300ms)
   useEffect(() => {
@@ -422,10 +498,10 @@ export default function PlacesPage() {
       {/* Header */}
       <div className="mb-6">
         <h1 className="font-display text-xl font-bold text-t1 tracking-wide">
-          Places
+          {pt.title}
         </h1>
         <p className="text-t3 text-sm mt-1">
-          Abu Dhabi & Dubai — where to go, what each area is known for
+          {pt.subtitle}
         </p>
       </div>
 
@@ -462,8 +538,8 @@ export default function PlacesPage() {
                 : 'bg-bg3 text-t3 border border-brd hover:border-brd2'
             }`}
           >
-            {cat.icon && <span className="mr-1">{cat.icon}</span>}
-            {cat.label}
+            {CAT_ICONS[cat.value] && <span className="mr-1">{CAT_ICONS[cat.value]}</span>}
+            {pt[cat.labelKey]}
           </button>
         ))}
 
@@ -472,7 +548,7 @@ export default function PlacesPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search places..."
+            placeholder={pt.searchPlaceholder}
             className="w-full px-4 py-2 text-xs bg-bg3 border border-brd rounded-lg text-t1 placeholder:text-t4 focus:border-gold/30 focus:outline-none transition-colors"
           />
         </div>
@@ -482,23 +558,20 @@ export default function PlacesPage() {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="bg-bg2 border border-brd rounded-xl p-5 animate-pulse">
-              <div className="flex gap-3 mb-3">
-                <div className="w-8 h-8 bg-bg3 rounded-lg" />
-                <div className="flex-1 space-y-2">
-                  <div className="h-4 bg-bg3 rounded w-3/4" />
-                  <div className="h-3 bg-bg3 rounded w-1/2" />
-                </div>
+            <div key={i} className="bg-bg2 border border-brd rounded-xl overflow-hidden animate-pulse">
+              <div className="h-36 bg-bg3" />
+              <div className="p-4 space-y-2">
+                <div className="h-4 bg-bg3 rounded w-3/4" />
+                <div className="h-3 bg-bg3 rounded w-full" />
+                <div className="h-3 bg-bg3 rounded w-1/2" />
               </div>
-              <div className="h-3 bg-bg3 rounded w-full mb-2" />
-              <div className="h-3 bg-bg3 rounded w-2/3" />
             </div>
           ))}
         </div>
       ) : places.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-t3 text-sm">No places found</p>
-          <p className="text-t4 text-xs mt-1">Try changing filters or search terms</p>
+          <p className="text-t3 text-sm">{pt.noResults}</p>
+          <p className="text-t4 text-xs mt-1">{pt.noResultsHint}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -506,6 +579,7 @@ export default function PlacesPage() {
             <PlaceCard
               key={place.id}
               place={place}
+              locale={locale}
               onClick={() => setSelectedSlug(place.slug)}
             />
           ))}
@@ -516,6 +590,8 @@ export default function PlacesPage() {
       {selectedSlug && (
         <PlaceDetailPanel
           slug={selectedSlug}
+          locale={locale}
+          pt={pt}
           onClose={() => setSelectedSlug(null)}
         />
       )}
