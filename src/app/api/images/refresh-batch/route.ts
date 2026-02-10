@@ -47,7 +47,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     const maxItems = 5
     const batch = items.slice(0, maxItems)
 
-    const results: Array<{ slug: string; success: boolean; saved?: number; error?: string }> = []
+    const results: Array<{ slug: string; success: boolean; saved?: number; google?: number; unsplash?: number; error?: string }> = []
 
     for (const item of batch) {
       try {
@@ -61,6 +61,8 @@ export async function POST(request: Request): Promise<NextResponse> {
           slug: item.slug,
           success: result.success,
           saved: result.saved,
+          google: result.google_count,
+          unsplash: result.unsplash_count,
           error: result.error,
         })
       } catch (err) {

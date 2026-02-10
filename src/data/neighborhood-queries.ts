@@ -74,9 +74,4 @@ export const NEIGHBORHOOD_QUERIES: Record<string, readonly string[]> = {
     'Dubai Gold Souk',
     'Old Dubai souks',
   ],
-  'dubai-south': [
-    'Expo City Dubai',
-    'Dubai Expo 2020',
-    'Al Maktoum Dubai',
-  ],
 } as const

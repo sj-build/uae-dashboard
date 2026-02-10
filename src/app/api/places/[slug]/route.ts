@@ -35,6 +35,44 @@ export async function GET(
       )
     }
 
+    // Attach hero image: place_image_selected (priority) > neighborhood_images (legacy)
+    let heroImage: Record<string, string | undefined> | null = null
+    try {
+      const { data: selImg } = await supabase
+        .from('place_image_selected')
+        .select('image_url, source')
+        .eq('place_slug', slug)
+        .maybeSingle()
+
+      if (selImg) {
+        const src = (selImg.source ?? {}) as Record<string, string>
+        heroImage = {
+          public_url: selImg.image_url,
+          photographer: src.photographer,
+          photographer_url: src.photographer_url,
+          source_url: src.source_url,
+          attribution_text: src.attribution,
+        }
+      } else {
+        const { data: legacyImg } = await supabase
+          .from('neighborhood_images')
+          .select('public_url, photographer, photographer_url, source_url, attribution_text')
+          .eq('neighborhood_slug', slug)
+          .eq('is_active', true)
+          .maybeSingle()
+
+        if (legacyImg) {
+          heroImage = legacyImg
+        }
+      }
+    } catch {
+      // Tables may not exist yet — skip gracefully
+    }
+
+    const placeWithImage = heroImage
+      ? { ...place, hero_image: heroImage }
+      : place
+
     // Fetch related news using keyword ilike filters (server-side)
     let relatedNews: Array<{ id: string; title: string; url: string; summary: string | null; published_at: string | null }> = []
 
@@ -56,7 +94,7 @@ export async function GET(
     }
 
     return NextResponse.json({
-      place,
+      place: placeWithImage,
       relatedNews,
     })
   } catch (error) {

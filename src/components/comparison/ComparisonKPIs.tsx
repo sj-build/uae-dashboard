@@ -23,6 +23,7 @@ const KPI_ITEMS: readonly KPIItem[] = [
     labelEn: 'Population',
     uaeValue: '10.5M',
     koreaValue: '51.7M',
+    uaeHighlight: true,
     source: 'UAE Statistics, World Bank',
     asOf: '2024',
   },

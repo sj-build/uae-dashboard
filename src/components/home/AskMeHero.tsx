@@ -165,12 +165,12 @@ export function AskMeHero({ onOpenSearch, onQuickQuestion }: AskMeHeroProps) {
       </div>
 
       {/* Today's UAE Tip */}
-      <div className="max-w-xs mx-auto">
+      <div className="max-w-md mx-auto">
         <div className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-pink-500/10 to-purple-500/10 border border-pink-400/20">
-          <span className="text-sm font-medium bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
+          <span className="text-sm font-medium bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent whitespace-nowrap">
             {locale === 'en' ? '💡 Today' : '💡 오늘의 발견'}
           </span>
-          <span className="text-xs text-t2">
+          <span className="text-xs text-t2 text-center">
             {todaysTip.tip}
           </span>
         </div>

@@ -70,7 +70,7 @@ export function StatsComparisonTable() {
                         )}
                       </div>
                     </td>
-                    <td className={`p-2.5 px-3.5 border-b border-brd/40 ${row.uaeHighlight ? 'text-gold font-mono' : ''} ${row.uaeColor === 'red' ? 'text-accent-red font-mono' : ''} ${row.uaeColor === 'green' ? 'text-accent-green font-mono' : ''}`}>
+                    <td className={`p-2.5 px-3.5 border-b border-brd/40 ${row.uaeHighlight ? 'text-gold font-mono' : ''}`}>
                       {row.uae}
                     </td>
                     <td className="p-2.5 px-3.5 border-b border-brd/40 font-mono">{row.korea}</td>

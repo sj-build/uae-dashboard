@@ -24,7 +24,6 @@ export const NEIGHBORHOOD_KEYWORDS: Record<string, readonly string[]> = {
   'jlt': ['dubai', 'jlt', 'jumeirah lake', 'lake towers'],
   'internet-city-media-city': ['dubai', 'media city', 'internet city'],
   'deira-old-dubai': ['dubai', 'creek', 'deira', 'souk'],
-  'dubai-south': ['dubai', 'expo', 'maktoum'],
 } as const
 
 /**

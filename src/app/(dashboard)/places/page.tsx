@@ -66,7 +66,6 @@ const PLACE_IMAGES: Record<string, string> = {
   'jlt': 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=600&h=340&fit=crop&q=80',
   'internet-city-media-city': 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&h=340&fit=crop&q=80',
   'deira-old-dubai': 'https://images.unsplash.com/photo-1565967511849-76a60a516170?w=600&h=340&fit=crop&q=80',
-  'dubai-south': 'https://images.unsplash.com/photo-1564769625905-50e93615e769?w=600&h=340&fit=crop&q=80',
 }
 
 // ─── Constants ───────────────────────────────────────────

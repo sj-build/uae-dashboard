@@ -1,14 +1,24 @@
 /**
  * Image refresh: "candidate collection" pipeline
- * Searches Unsplash → filters by relevance keywords → scores → saves to place_image_candidates
+ * 1. Google Places (if Place ID mapped) → 2. Unsplash fallback
+ * Scores, merges, saves top candidates to place_image_candidates.
  * Does NOT auto-confirm. Admin must select via /admin/place-images.
  */
 
 import { searchPhotos, scorePhoto, buildAttribution } from '@/lib/unsplash'
 import type { UnsplashPhoto } from '@/lib/unsplash'
+import {
+  fetchPlacePhotos,
+  buildPhotoRef,
+  buildPhotoThumbRef,
+  scoreGooglePhoto,
+  resolvePhotoRedirect,
+} from '@/lib/google-places'
+import type { GooglePlacePhoto } from '@/lib/google-places'
 import { getSupabaseAdmin } from '@/lib/supabase'
 import { NEIGHBORHOOD_QUERIES } from '@/data/neighborhood-queries'
 import { NEIGHBORHOOD_KEYWORDS, NEGATIVE_KEYWORDS } from '@/data/neighborhood-keywords'
+import { GOOGLE_PLACE_IDS } from '@/data/google-place-ids'
 
 export interface RefreshInput {
   readonly slug: string
@@ -30,20 +40,35 @@ export interface RefreshResult {
   readonly searched: number
   readonly passed_filter: number
   readonly saved: number
+  readonly google_count: number
+  readonly unsplash_count: number
   readonly candidates: readonly CandidateResult[]
   readonly error?: string
 }
 
-/**
- * Build searchable text from all photo metadata (description + alt + tags)
- */
+/** DB row shape for insert */
+interface CandidateRow {
+  readonly place_slug: string
+  readonly provider: string
+  readonly provider_ref: string
+  readonly image_url: string
+  readonly thumb_url: string
+  readonly photographer: string
+  readonly photographer_url: string
+  readonly license: string
+  readonly source_url: string
+  readonly score: number
+  readonly meta: Record<string, unknown>
+}
+
+// ── Unsplash helpers ────────────────────────────────────────────────
+
 function buildPhotoText(photo: UnsplashPhoto): string {
   const parts = [
     photo.description,
     photo.alt_description,
   ].filter(Boolean)
 
-  // Unsplash tags contain the most reliable location info
   if (photo.tags) {
     for (const tag of photo.tags) {
       parts.push(tag.title)
@@ -53,9 +78,6 @@ function buildPhotoText(photo: UnsplashPhoto): string {
   return parts.join(' ').toLowerCase()
 }
 
-/**
- * Check if a photo matches must-include keywords for the given place
- */
 function matchesMustKeywords(photo: UnsplashPhoto, slug: string): number {
   const mustKeywords = NEIGHBORHOOD_KEYWORDS[slug]
   if (!mustKeywords) return 0
@@ -64,9 +86,6 @@ function matchesMustKeywords(photo: UnsplashPhoto, slug: string): number {
   return mustKeywords.reduce((hits, kw) => text.includes(kw.toLowerCase()) ? hits + 1 : hits, 0)
 }
 
-/**
- * Count negative keyword hits in a photo's text
- */
 function countNegativeHits(photo: UnsplashPhoto): number {
   const text = buildPhotoText(photo)
   return NEGATIVE_KEYWORDS.reduce(
@@ -75,9 +94,6 @@ function countNegativeHits(photo: UnsplashPhoto): number {
   )
 }
 
-/**
- * Score a photo with relevance, quality, and negative keyword penalties
- */
 function scoreCandidatePhoto(photo: UnsplashPhoto, slug: string): number {
   const baseScore = scorePhoto(photo)
   const keywordHits = matchesMustKeywords(photo, slug)
@@ -86,18 +102,53 @@ function scoreCandidatePhoto(photo: UnsplashPhoto, slug: string): number {
   return baseScore + (keywordHits * 10) - (negativeHits * 30)
 }
 
-/**
- * Collect image candidates for a place slug.
- * Saves top candidates to place_image_candidates table.
- * Does NOT auto-select or change what's displayed.
- */
-export async function collectCandidates(input: RefreshInput): Promise<RefreshResult> {
-  const { slug, maxCandidates = 6 } = input
-  const queries = input.queries
-    ?? NEIGHBORHOOD_QUERIES[slug]
-    ?? [`${slug.replace(/-/g, ' ')}`]
+// ── Google Places candidates ────────────────────────────────────────
 
-  // 1. Search Unsplash across all queries
+function hasGooglePlacesKey(): boolean {
+  return Boolean(process.env.GOOGLE_PLACES_API_KEY)
+}
+
+async function collectGoogleCandidates(
+  slug: string
+): Promise<readonly CandidateRow[]> {
+  const placeId = GOOGLE_PLACE_IDS[slug]
+  if (!placeId || !hasGooglePlacesKey()) return []
+
+  const photos = await fetchPlacePhotos(placeId, 10)
+
+  // Resolve thumb redirects in parallel for admin preview
+  const thumbUrls = await Promise.all(
+    photos.map(photo => resolvePhotoRedirect(photo.name, 400))
+  )
+
+  return photos.map((photo: GooglePlacePhoto, i: number) => {
+    const attribution = photo.authorAttributions[0]
+    return {
+      place_slug: slug,
+      provider: 'google_places',
+      provider_ref: photo.name,
+      image_url: buildPhotoRef(photo.name),
+      thumb_url: thumbUrls[i] ?? buildPhotoThumbRef(photo.name),
+      photographer: attribution?.displayName ?? 'Google Maps User',
+      photographer_url: attribution?.uri ?? '',
+      license: 'Google Places',
+      source_url: `https://www.google.com/maps/place/?q=place_id:${placeId}`,
+      score: scoreGooglePhoto(photo),
+      meta: {
+        width: photo.widthPx,
+        height: photo.heightPx,
+        attribution: `Photo by ${attribution?.displayName ?? 'Google Maps User'} via Google`,
+      },
+    }
+  })
+}
+
+// ── Unsplash candidates ─────────────────────────────────────────────
+
+async function collectUnsplashCandidates(
+  slug: string,
+  queries: readonly string[]
+): Promise<{ readonly rows: readonly CandidateRow[]; readonly searched: number; readonly passed_filter: number }> {
   const allPhotos: UnsplashPhoto[] = []
   const seenIds = new Set<string>()
 
@@ -115,59 +166,19 @@ export async function collectCandidates(input: RefreshInput): Promise<RefreshRes
     }
   }
 
-  if (allPhotos.length === 0) {
-    return {
-      success: false,
-      slug,
-      searched: 0,
-      passed_filter: 0,
-      saved: 0,
-      candidates: [],
-      error: `No photos found for ${slug}`,
-    }
-  }
-
-  // 2. Filter: require at least 1 must-keyword hit (if keywords exist for this slug)
   const mustKeywords = NEIGHBORHOOD_KEYWORDS[slug]
   const filtered = mustKeywords
     ? allPhotos.filter(p => matchesMustKeywords(p, slug) >= 1)
     : allPhotos
 
-  // If nothing passed filter, use all but with lower scores
   const pool = filtered.length > 0 ? filtered : allPhotos
 
-  // 3. Score and rank
   const scored = pool
-    .map(photo => ({
-      photo,
-      score: scoreCandidatePhoto(photo, slug),
-    }))
+    .map(photo => ({ photo, score: scoreCandidatePhoto(photo, slug) }))
     .filter(({ score }) => score > 0)
     .sort((a, b) => b.score - a.score)
-    .slice(0, maxCandidates)
 
-  if (scored.length === 0) {
-    return {
-      success: false,
-      slug,
-      searched: allPhotos.length,
-      passed_filter: filtered.length,
-      saved: 0,
-      candidates: [],
-      error: `All candidates scored 0 or below for ${slug}`,
-    }
-  }
-
-  // 4. Save candidates to DB (replace previous candidates for this slug)
-  const supabase = getSupabaseAdmin()
-
-  // Clear old candidates for this slug
-  await supabase
-    .from('place_image_candidates')
-    .delete()
-    .eq('place_slug', slug)
-
-  const candidateRows = scored.map(({ photo, score }) => ({
+  const rows: readonly CandidateRow[] = scored.map(({ photo, score }) => ({
     place_slug: slug,
     provider: 'unsplash',
     provider_ref: photo.id,
@@ -187,17 +198,77 @@ export async function collectCandidates(input: RefreshInput): Promise<RefreshRes
     },
   }))
 
+  return { rows, searched: allPhotos.length, passed_filter: filtered.length }
+}
+
+// ── Main pipeline ───────────────────────────────────────────────────
+
+export async function collectCandidates(input: RefreshInput): Promise<RefreshResult> {
+  const { slug, maxCandidates = 6 } = input
+  const queries = input.queries
+    ?? NEIGHBORHOOD_QUERIES[slug]
+    ?? [`${slug.replace(/-/g, ' ')}`]
+
+  // 1. Try Google Places first
+  let googleRows: readonly CandidateRow[] = []
+  try {
+    googleRows = await collectGoogleCandidates(slug)
+  } catch (error) {
+    console.error(`[image-refresh] Google Places failed for ${slug}:`, error)
+  }
+
+  // 2. Unsplash fallback (always run if Google returned < maxCandidates)
+  let unsplashResult = { rows: [] as readonly CandidateRow[], searched: 0, passed_filter: 0 }
+  if (googleRows.length < maxCandidates) {
+    try {
+      unsplashResult = await collectUnsplashCandidates(slug, queries)
+    } catch {
+      // Unsplash also failed
+    }
+  }
+
+  // 3. Merge both sources, sort by score, take top N
+  const allRows = [...googleRows, ...unsplashResult.rows]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, maxCandidates)
+
+  const totalSearched = googleRows.length + unsplashResult.searched
+
+  if (allRows.length === 0) {
+    return {
+      success: false,
+      slug,
+      searched: totalSearched,
+      passed_filter: unsplashResult.passed_filter,
+      saved: 0,
+      google_count: googleRows.length,
+      unsplash_count: unsplashResult.rows.length,
+      candidates: [],
+      error: `No photos found for ${slug}`,
+    }
+  }
+
+  // 4. Save to DB (replace previous candidates for this slug)
+  const supabase = getSupabaseAdmin()
+
+  await supabase
+    .from('place_image_candidates')
+    .delete()
+    .eq('place_slug', slug)
+
   const { error: insertError } = await supabase
     .from('place_image_candidates')
-    .insert(candidateRows)
+    .insert(allRows)
 
   if (insertError) {
     return {
       success: false,
       slug,
-      searched: allPhotos.length,
-      passed_filter: filtered.length,
+      searched: totalSearched,
+      passed_filter: unsplashResult.passed_filter,
       saved: 0,
+      google_count: googleRows.length,
+      unsplash_count: unsplashResult.rows.length,
       candidates: [],
       error: `DB insert failed: ${insertError.message}`,
     }
@@ -206,15 +277,17 @@ export async function collectCandidates(input: RefreshInput): Promise<RefreshRes
   return {
     success: true,
     slug,
-    searched: allPhotos.length,
-    passed_filter: filtered.length,
-    saved: scored.length,
-    candidates: scored.map(({ photo, score }) => ({
-      provider_ref: photo.id,
-      image_url: `${photo.urls.raw}&w=1200&q=85&fm=jpg&fit=crop`,
-      thumb_url: photo.urls.small,
-      photographer: photo.user.name,
-      score,
+    searched: totalSearched,
+    passed_filter: unsplashResult.passed_filter,
+    saved: allRows.length,
+    google_count: googleRows.length,
+    unsplash_count: unsplashResult.rows.length,
+    candidates: allRows.map(row => ({
+      provider_ref: row.provider_ref,
+      image_url: row.image_url,
+      thumb_url: row.thumb_url,
+      photographer: row.photographer,
+      score: row.score,
     })),
   }
 }

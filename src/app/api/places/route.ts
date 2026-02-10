@@ -3,6 +3,28 @@ import { getSupabaseClient } from '@/lib/supabase'
 
 export const maxDuration = 55
 
+/** Curated display order per city (slugs not listed sort last alphabetically) */
+const DISPLAY_ORDER: Record<string, readonly string[]> = {
+  abudhabi: [
+    'al-maryah-island',
+    'al-reem-island',
+    'downtown-corniche',
+    'yas-island',
+    'saadiyat-island',
+    'masdar-city',
+    'kizad',
+  ],
+  dubai: [
+    'difc',
+    'downtown-dubai',
+    'business-bay',
+    'dubai-marina',
+    'jlt',
+    'internet-city-media-city',
+    'deira-old-dubai',
+  ],
+}
+
 /**
  * GET /api/places?city=abudhabi|dubai&category=...&q=...
  *
@@ -89,6 +111,18 @@ export async function GET(request: Request): Promise<NextResponse> {
       } catch {
         // Tables may not exist yet — skip gracefully
       }
+    }
+
+    // Apply curated display order
+    if (city && DISPLAY_ORDER[city]) {
+      const order = DISPLAY_ORDER[city]
+      items = [...items].sort((a, b) => {
+        const ai = order.indexOf(a.slug)
+        const bi = order.indexOf(b.slug)
+        const oa = ai >= 0 ? ai : order.length
+        const ob = bi >= 0 ? bi : order.length
+        return oa - ob
+      })
     }
 
     // Server-side search would be ideal, but with <100 places, client-side is acceptable

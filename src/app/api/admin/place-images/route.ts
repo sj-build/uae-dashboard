@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { getSupabaseAdmin } from '@/lib/supabase'
 import { cookies } from 'next/headers'
 import { verifySessionToken } from '@/lib/auth'
+import { buildPhotoUrl } from '@/lib/google-places'
 
 export const maxDuration = 55
 
@@ -10,6 +11,8 @@ const MAX_IMAGE_SIZE = 5 * 1024 * 1024 // 5MB
 const ALLOWED_IMAGE_DOMAINS = [
   'images.unsplash.com',
   'plus.unsplash.com',
+  'places.googleapis.com',
+  'lh3.googleusercontent.com',
 ]
 
 async function checkAdminAuth(): Promise<boolean> {
@@ -46,13 +49,39 @@ function isAllowedDomain(url: string): boolean {
   }
 }
 
+/**
+ * For Google Places photo URLs stored without API key,
+ * resolve to a full URL with the key injected.
+ */
+/**
+ * For Google Places photo URLs stored without API key,
+ * resolve to a full URL with the key injected.
+ * Returns original URL if not a Google Places photo or key unavailable.
+ */
+function resolveImageUrl(url: string): string {
+  const GOOGLE_PHOTO_PATTERN = /^https:\/\/places\.googleapis\.com\/v1\/(places\/[^/]+\/photos\/[^/]+)\/media/
+  const match = url.match(GOOGLE_PHOTO_PATTERN)
+  if (match) {
+    try {
+      const photoName = match[1]
+      const parsed = new URL(url)
+      const maxWidth = parseInt(parsed.searchParams.get('maxWidthPx') ?? '1200', 10)
+      return buildPhotoUrl(photoName, maxWidth)
+    } catch {
+      return url
+    }
+  }
+  return url
+}
+
 async function downloadAndMirror(
   imageSourceUrl: string,
   slug: string,
 ): Promise<{ imageUrl: string; buffer: Buffer } | { error: string; status: number }> {
   const supabase = getSupabaseAdmin()
 
-  const imageResponse = await fetch(imageSourceUrl, {
+  const fetchUrl = resolveImageUrl(imageSourceUrl)
+  const imageResponse = await fetch(fetchUrl, {
     signal: AbortSignal.timeout(15000),
   })
 
@@ -181,7 +210,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       // SSRF protection: only allow known image domains
       if (!isAllowedDomain(manual_url)) {
         return NextResponse.json(
-          { error: 'Only Unsplash image URLs are allowed' },
+          { error: 'Only Unsplash or Google Places image URLs are allowed' },
           { status: 400 }
         )
       }
