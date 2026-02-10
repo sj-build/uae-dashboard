@@ -35,20 +35,32 @@ export interface RefreshResult {
 }
 
 /**
+ * Build searchable text from all photo metadata (description + alt + tags)
+ */
+function buildPhotoText(photo: UnsplashPhoto): string {
+  const parts = [
+    photo.description,
+    photo.alt_description,
+  ].filter(Boolean)
+
+  // Unsplash tags contain the most reliable location info
+  if (photo.tags) {
+    for (const tag of photo.tags) {
+      parts.push(tag.title)
+    }
+  }
+
+  return parts.join(' ').toLowerCase()
+}
+
+/**
  * Check if a photo matches must-include keywords for the given place
  */
 function matchesMustKeywords(photo: UnsplashPhoto, slug: string): number {
   const mustKeywords = NEIGHBORHOOD_KEYWORDS[slug]
   if (!mustKeywords) return 0
 
-  const text = [
-    photo.description,
-    photo.alt_description,
-  ]
-    .filter(Boolean)
-    .join(' ')
-    .toLowerCase()
-
+  const text = buildPhotoText(photo)
   return mustKeywords.reduce((hits, kw) => text.includes(kw.toLowerCase()) ? hits + 1 : hits, 0)
 }
 
@@ -56,14 +68,7 @@ function matchesMustKeywords(photo: UnsplashPhoto, slug: string): number {
  * Count negative keyword hits in a photo's text
  */
 function countNegativeHits(photo: UnsplashPhoto): number {
-  const text = [
-    photo.description,
-    photo.alt_description,
-  ]
-    .filter(Boolean)
-    .join(' ')
-    .toLowerCase()
-
+  const text = buildPhotoText(photo)
   return NEGATIVE_KEYWORDS.reduce(
     (hits, kw) => text.includes(kw.toLowerCase()) ? hits + 1 : hits,
     0

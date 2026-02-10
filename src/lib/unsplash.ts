@@ -24,6 +24,7 @@ export interface UnsplashPhoto {
     readonly links: { readonly html: string }
   }
   readonly likes: number
+  readonly tags?: ReadonlyArray<{ readonly title: string }>
 }
 
 interface UnsplashSearchResponse {

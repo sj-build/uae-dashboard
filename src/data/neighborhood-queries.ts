@@ -1,80 +1,82 @@
 /**
- * Default Unsplash search queries per neighborhood
- * Each neighborhood has 2-3 queries to get diverse candidates
+ * Unsplash search queries per neighborhood
+ * Keep queries SHORT (2-3 words) for better Unsplash results.
+ * Longer queries return fewer/irrelevant results on Unsplash.
  */
 export const NEIGHBORHOOD_QUERIES: Record<string, readonly string[]> = {
   // === Abu Dhabi ===
   'saadiyat-island': [
-    'Saadiyat Island Louvre Abu Dhabi exterior',
-    'Saadiyat Island Abu Dhabi beach',
-    'Saadiyat cultural district Abu Dhabi',
+    'Louvre Abu Dhabi',
+    'Saadiyat Island',
+    'Abu Dhabi museum',
   ],
   'al-maryah-island': [
-    'Al Maryah Island Abu Dhabi skyline',
-    'Galleria Al Maryah Island Abu Dhabi',
-    'ADGM Abu Dhabi financial district',
+    'Abu Dhabi skyline',
+    'Abu Dhabi financial district',
+    'Abu Dhabi waterfront towers',
   ],
   'downtown-corniche': [
-    'Abu Dhabi Corniche skyline',
-    'Abu Dhabi skyline corniche sunset',
-    'Abu Dhabi downtown waterfront',
+    'Abu Dhabi Corniche',
+    'Abu Dhabi skyline sunset',
+    'Corniche Abu Dhabi',
   ],
   'yas-island': [
-    'Yas Island Abu Dhabi sunset',
-    'Yas Marina Circuit Abu Dhabi',
-    'Yas Bay waterfront Abu Dhabi night',
+    'Yas Marina Abu Dhabi',
+    'Ferrari World Abu Dhabi',
+    'Yas Island',
   ],
   'al-reem-island': [
-    'Al Reem Island Abu Dhabi towers',
-    'Abu Dhabi residential towers waterfront',
+    'Abu Dhabi towers',
+    'Abu Dhabi skyline modern',
   ],
   'masdar-city': [
-    'Masdar City Abu Dhabi architecture',
-    'Masdar City sustainable city',
+    'Masdar City',
+    'Abu Dhabi sustainable',
   ],
   'kizad': [
     'Khalifa Port Abu Dhabi',
-    'Abu Dhabi industrial zone port',
+    'Abu Dhabi port industrial',
   ],
 
   // === Dubai ===
   'difc': [
-    'DIFC Gate Building Dubai',
-    'DIFC Dubai skyline night',
-    'Dubai International Financial Centre',
+    'DIFC Dubai',
+    'Dubai financial centre',
+    'Gate Building Dubai',
   ],
   'downtown-dubai': [
-    'Burj Khalifa Dubai skyline night',
-    'Dubai Fountain night',
-    'Downtown Dubai aerial view',
+    'Burj Khalifa',
+    'Dubai fountain',
+    'Downtown Dubai skyline',
   ],
   'business-bay': [
-    'Business Bay Dubai canal skyline',
-    'Business Bay Dubai towers night',
+    'Business Bay Dubai',
+    'Dubai canal skyline',
+    'Dubai Business Bay night',
   ],
   'dubai-marina': [
+    'Dubai Marina',
     'Dubai Marina skyline',
-    'Dubai Marina waterfront',
-    'Dubai Marina towers',
+    'JBR Dubai beach',
   ],
   'jlt': [
-    'Jumeirah Lake Towers Dubai',
-    'JLT Dubai skyline',
-    'Dubai lake towers',
+    'Jumeirah Lake Towers',
+    'JLT Dubai',
+    'Dubai lake towers skyline',
   ],
   'internet-city-media-city': [
     'Dubai Media City',
-    'Dubai technology park',
-    'Dubai modern office skyline',
+    'Dubai Internet City',
+    'Dubai technology district',
   ],
   'deira-old-dubai': [
-    'Dubai Creek traditional',
+    'Dubai Creek',
+    'Dubai Gold Souk',
     'Old Dubai souks',
-    'Deira Dubai waterfront',
   ],
   'dubai-south': [
-    'Dubai Expo city',
-    'Dubai South district',
-    'Al Maktoum Airport Dubai',
+    'Expo City Dubai',
+    'Dubai Expo 2020',
+    'Al Maktoum Dubai',
   ],
 } as const
