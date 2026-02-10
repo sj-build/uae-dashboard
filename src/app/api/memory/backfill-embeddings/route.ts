@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 
+export const maxDuration = 55
+
 /**
  * Backfill embeddings for existing documents
  * POST /api/memory/backfill-embeddings
