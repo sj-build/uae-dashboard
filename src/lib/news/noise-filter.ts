@@ -20,6 +20,8 @@ function filterNoise(
   return items.filter(
     (item) =>
       item.lane === 'deal' ||
+      item.lane === 'korea_uae' ||
+      item.lane === 'uae_local' ||
       !isNoisy(item.title, item.summary ?? '', noiseTerms),
   )
 }

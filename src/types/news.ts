@@ -4,7 +4,7 @@ export type NewsPriority = 'reuters' | 'bloomberg' | 'financial_times' | 'wsj' |
 export type NewsImpact = 'high' | 'medium' | 'low'
 export type NewsCategory = 'politics' | 'economy' | 'society' | 'industry' | 'legal' | 'korea'
 
-export type NewsLane = 'deal' | 'macro'
+export type NewsLane = 'deal' | 'macro' | 'uae_local' | 'korea_uae'
 
 export interface NewsItem {
   readonly id: string

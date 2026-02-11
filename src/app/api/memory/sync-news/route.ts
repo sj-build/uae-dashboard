@@ -17,32 +17,37 @@ const isSupabaseConfigured = () => {
   )
 }
 
-// Categorize news based on content
+// Categorize news based on content and lane
 function categorizeNews(item: NewsItem): string {
   const text = `${item.title} ${item.tags.join(' ')}`.toLowerCase()
 
   // Korea-related first (highest priority)
-  if (/korea|korean|한국|kepco|samsung|삼성|sk|hanwha|한화|hyundai|현대|k-beauty|k-pop|hallyu|한류|cepa|barakah|바라카|lg|posco|포스코|doosan|두산/i.test(text)) {
+  if (/korea|korean|한국|kepco|k-beauty|k-pop|k뷰티|k팝|hallyu|한류|cepa|barakah|바라카|삼성엔지니어링|한화|현대건설/i.test(text)) {
     return 'uae-korea'
   }
 
+  // UAE local lane gets uae-local category
+  if (item.lane === 'uae_local') {
+    return 'uae-local'
+  }
+
   // Investment & SWF
-  if (/mubadala|adia|adq|ihc|mgx|lunate|sovereign wealth|private equity|venture|fund|acquisition|stake|portfolio|asset|investment/i.test(text)) {
+  if (/mubadala|adia|adq|ihc|mgx|lunate|sovereign wealth|private equity|venture|fund|acquisition|stake|portfolio|investment/i.test(text)) {
     return 'investment'
   }
 
   // Industry specific
-  if (/adnoc|masdar|nuclear|oil|gas|renewable|energy|ai|g42|data center|stargate|technology|real estate|construction|infrastructure|tourism|aviation|emirates|etihad|logistics|port|dp world|fintech|healthcare|pharma/i.test(text)) {
+  if (/adnoc|masdar|nuclear|oil|gas|renewable|energy|ai|g42|data center|stargate|technology|real estate|construction|infrastructure|tourism|aviation|emirates|etihad|logistics|dp world|fintech|healthcare/i.test(text)) {
     return 'industry'
   }
 
   // Politics
-  if (/정치|외교|왕족|diplomatic|political|royal|government|mbz|sheikh|tahnoun/i.test(text)) {
+  if (/diplomatic|political|royal|government|mbz|sheikh|tahnoun|cabinet/i.test(text)) {
     return 'politics'
   }
 
   // Economy
-  if (/경제|금융|gdp|economy|finance|trade|inflation|currency/i.test(text)) {
+  if (/gdp|economy|finance|trade|inflation|currency|central bank/i.test(text)) {
     return 'economy'
   }
 
@@ -76,36 +81,48 @@ export async function POST(request: Request): Promise<NextResponse> {
     const supabase = getSupabaseAdmin()
 
     // Crawl news from keyword pack with lane-based caps
+    const uaeLocalQueriesEn = NEWS_KEYWORD_PACK.google_news_rss_en.uae_local.always_on
     const dealQueriesEn = NEWS_KEYWORD_PACK.google_news_rss_en.deal.always_on
+    const koreaUaeQueriesEn = NEWS_KEYWORD_PACK.google_news_rss_en.korea_uae.always_on
     const macroQueriesEn = NEWS_KEYWORD_PACK.google_news_rss_en.macro.always_on
     const dealQueriesKo = NEWS_KEYWORD_PACK.naver_search_ko.deal.always_on
+    const koreaUaeQueriesKo = NEWS_KEYWORD_PACK.naver_search_ko.korea_uae.always_on
     const macroQueriesKo = NEWS_KEYWORD_PACK.naver_search_ko.macro.always_on
 
     const [
+      googleUaeLocalResults,
       googleDealResults,
+      googleKoreaUaeResults,
       googleMacroResults,
       naverDealResults,
+      naverKoreaUaeResults,
       naverMacroResults,
     ] = await Promise.allSettled([
-      crawlGoogleNews(dealQueriesEn, { lane: 'deal', resultCap: 5 }),
+      crawlGoogleNews(uaeLocalQueriesEn, { lane: 'uae_local', resultCap: 3 }),
+      crawlGoogleNews(dealQueriesEn, { lane: 'deal', resultCap: 3 }),
+      crawlGoogleNews(koreaUaeQueriesEn, { lane: 'korea_uae', resultCap: 3 }),
       crawlGoogleNews(macroQueriesEn, { lane: 'macro', resultCap: 3 }),
-      crawlNaverNews(dealQueriesKo, { lane: 'deal', resultCap: 5 }),
+      crawlNaverNews(dealQueriesKo, { lane: 'deal', resultCap: 3 }),
+      crawlNaverNews(koreaUaeQueriesKo, { lane: 'korea_uae', resultCap: 3 }),
       crawlNaverNews(macroQueriesKo, { lane: 'macro', resultCap: 3 }),
     ])
 
     const allItems: NewsItem[] = []
 
-    if (googleDealResults.status === 'fulfilled') {
-      allItems.push(...googleDealResults.value)
-    }
-    if (googleMacroResults.status === 'fulfilled') {
-      allItems.push(...googleMacroResults.value)
-    }
-    if (naverDealResults.status === 'fulfilled') {
-      allItems.push(...naverDealResults.value)
-    }
-    if (naverMacroResults.status === 'fulfilled') {
-      allItems.push(...naverMacroResults.value)
+    const settledResults = [
+      googleUaeLocalResults,
+      googleDealResults,
+      googleKoreaUaeResults,
+      googleMacroResults,
+      naverDealResults,
+      naverKoreaUaeResults,
+      naverMacroResults,
+    ]
+
+    for (const result of settledResults) {
+      if (result.status === 'fulfilled') {
+        allItems.push(...result.value)
+      }
     }
 
     // Apply noise filter before dedup

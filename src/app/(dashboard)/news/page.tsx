@@ -22,36 +22,36 @@ interface NewsCategory {
   readonly isOthers?: boolean
 }
 
-// News categories - UAE-Korea, Major Headlines, Investment, Industry, Others
+// News categories - UAE Local, UAE-Korea, Investment, Industry, Others
 const NEWS_CATEGORIES: readonly NewsCategory[] = [
+  {
+    id: 'uae-local',
+    icon: '🇦🇪',
+    labelKo: 'UAE 현지',
+    labelEn: 'UAE Local',
+    keywords: [],
+    majorMediaOnly: true, // Filter by publisher (major EN + UAE media)
+  },
   {
     id: 'uae-korea',
     icon: '🇰🇷',
     labelKo: 'UAE-Korea 협력',
     labelEn: 'UAE-Korea',
-    keywords: ['Korea', 'Korean', '한국', 'KEPCO', 'Samsung', '삼성', 'SK', 'Hanwha', '한화', 'Hyundai', '현대', 'K-beauty', 'K-pop', 'Hallyu', '한류', 'CEPA', 'FAB Seoul', 'Barakah', '바라카', 'LG', 'Posco', '포스코', 'Doosan', '두산'],
-  },
-  {
-    id: 'major-headlines',
-    icon: '📰',
-    labelKo: '미디어 헤드라인',
-    labelEn: 'Media Headlines',
-    keywords: [],
-    majorMediaOnly: true,
+    keywords: ['Korea', 'Korean', '한국', 'KEPCO', 'Samsung Engineering', '삼성엔지니어링', 'Hanwha', '한화', 'Hyundai', '현대건설', 'K-beauty', 'K-pop', 'K뷰티', 'K팝', 'Hallyu', '한류', 'CEPA', 'Barakah', '바라카'],
   },
   {
     id: 'investment',
     icon: '💰',
     labelKo: '투자 & 국부펀드',
     labelEn: 'Investment & SWF',
-    keywords: ['investment', 'Mubadala', 'ADIA', 'ADQ', 'IHC', 'MGX', 'Lunate', 'sovereign wealth', 'private equity', 'venture', 'fund', 'acquisition', 'stake', 'portfolio', 'asset'],
+    keywords: ['investment', 'Mubadala', 'ADIA', 'ADQ', 'IHC', 'MGX', 'Lunate', 'sovereign wealth', 'private equity', 'venture', 'fund', 'acquisition', 'stake', 'portfolio'],
   },
   {
     id: 'industry',
     icon: '🏭',
     labelKo: '주요 산업',
     labelEn: 'Major Industries',
-    keywords: ['ADNOC', 'Masdar', 'nuclear', 'oil', 'gas', 'renewable', 'energy', 'AI', 'G42', 'data center', 'Stargate', 'technology', 'real estate', 'construction', 'infrastructure', 'tourism', 'aviation', 'Emirates', 'Etihad', 'logistics', 'port', 'DP World', 'fintech', 'healthcare', 'pharma'],
+    keywords: ['ADNOC', 'Masdar', 'nuclear', 'oil', 'gas', 'renewable', 'energy', 'AI', 'G42', 'data center', 'Stargate', 'technology', 'real estate', 'construction', 'infrastructure', 'tourism', 'aviation', 'Emirates', 'Etihad', 'logistics', 'DP World', 'fintech', 'healthcare'],
   },
   {
     id: 'others',
@@ -63,8 +63,15 @@ const NEWS_CATEGORIES: readonly NewsCategory[] = [
   },
 ] as const
 
-// Major media sources
-const MAJOR_MEDIA = ['Reuters', 'Bloomberg', 'Financial Times', 'FT', 'WSJ', 'Wall Street Journal', 'BBC', 'CNN', 'The Economist', 'AP', 'AFP']
+// Major English media + UAE local English media
+const MAJOR_MEDIA = [
+  // International
+  'Reuters', 'Bloomberg', 'Financial Times', 'FT', 'WSJ', 'Wall Street Journal',
+  'BBC', 'CNN', 'The Economist', 'AP', 'AFP', 'CNBC',
+  // UAE local English media
+  'The National', 'Gulf News', 'Khaleej Times', 'Arabian Business', 'Arab News',
+  'WAM', 'Emirates News Agency', 'Gulf Today', 'Gulf Business',
+]
 
 const PUBLISHER_COLORS: Record<string, string> = {
   Reuters: 'bg-accent-orange/15 text-accent-orange border-accent-orange/20',
@@ -112,23 +119,30 @@ function isMajorMedia(publisher: string): boolean {
 
 // Category badge colors
 const CATEGORY_BADGE: Record<string, { label: string; labelEn: string; color: string }> = {
+  'uae-local': { label: '🇦🇪 UAE', labelEn: '🇦🇪 UAE', color: 'bg-accent-purple/15 text-accent-purple border-accent-purple/25' },
   'uae-korea': { label: '🇰🇷 한-UAE', labelEn: '🇰🇷 KR-UAE', color: 'bg-gold/15 text-gold border-gold/25' },
   investment: { label: '💰 투자', labelEn: '💰 Investment', color: 'bg-accent-green/15 text-accent-green border-accent-green/25' },
   industry: { label: '🏭 산업', labelEn: '🏭 Industry', color: 'bg-accent-blue/15 text-accent-blue border-accent-blue/25' },
-  'major-headlines': { label: '📰 글로벌', labelEn: '📰 Global', color: 'bg-accent-purple/15 text-accent-purple border-accent-purple/25' },
+}
+
+const KOREA_KEYWORDS = ['korea', 'korean', '한국', 'kepco', 'k-beauty', 'k-pop', 'k뷰티', 'k팝', '한류', 'hallyu', 'barakah', '바라카', 'cepa', '삼성엔지니어링', '한화', '현대건설']
+
+function isKoreaRelated(text: string): boolean {
+  const lower = text.toLowerCase()
+  return KOREA_KEYWORDS.some(k => lower.includes(k))
 }
 
 function detectCategory(item: { title: string; tags: readonly string[]; summary?: string | null; publisher: string }): string | null {
   const text = `${item.title} ${item.tags.join(' ')} ${item.summary ?? ''}`.toLowerCase()
 
-  // Korea first
-  if (NEWS_CATEGORIES[0].keywords.some(k => text.includes(k.toLowerCase()))) return 'uae-korea'
-  // Investment
+  // Korea first (index 1 in NEWS_CATEGORIES)
+  if (NEWS_CATEGORIES[1].keywords.some(k => text.includes(k.toLowerCase()))) return 'uae-korea'
+  // UAE Local — major media, NOT Korea-related (index 0)
+  if (isMajorMedia(item.publisher) && !isKoreaRelated(text)) return 'uae-local'
+  // Investment (index 2)
   if (NEWS_CATEGORIES[2].keywords.some(k => text.includes(k.toLowerCase()))) return 'investment'
-  // Industry
+  // Industry (index 3)
   if (NEWS_CATEGORIES[3].keywords.some(k => text.includes(k.toLowerCase()))) return 'industry'
-  // Major media
-  if (isMajorMedia(item.publisher)) return 'major-headlines'
 
   return null
 }
@@ -256,7 +270,7 @@ export default function NewsPage() {
   const { t, locale } = useLocale()
   const homeT = t.pages.home
   const newsT = t.pages.news
-  const [activeCategory, setActiveCategory] = useState('uae-korea') // Default to UAE-Korea
+  const [activeCategory, setActiveCategory] = useState('uae-local') // Default to UAE Local
   const [newsItems, setNewsItems] = useState<readonly NewsItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -316,9 +330,13 @@ export default function NewsPage() {
     const category = NEWS_CATEGORIES.find((c) => c.id === activeCategory)
     if (!category) return newsItems
 
-    // Major media filter
+    // UAE Local: major media + NOT Korea-related
     if (category.majorMediaOnly) {
-      return newsItems.filter((item) => isMajorMedia(item.publisher))
+      return newsItems.filter((item) => {
+        if (!isMajorMedia(item.publisher)) return false
+        const text = `${item.title} ${item.tags.join(' ')} ${item.summary ?? ''}`
+        return !isKoreaRelated(text)
+      })
     }
 
     // Others category - news that don't match any other category
@@ -338,7 +356,7 @@ export default function NewsPage() {
     return newsItems.filter((item) => matchesCategory(item, category))
   }, [newsItems, activeCategory, matchesCategory])
 
-  const isUaeKorea = activeCategory === 'uae-korea'
+  const isHighlightTab = activeCategory === 'uae-korea' || activeCategory === 'uae-local'
 
   return (
     <>
@@ -405,7 +423,7 @@ export default function NewsPage() {
                 item={item}
                 p={homeT}
                 locale={locale}
-                highlight={isUaeKorea}
+                highlight={isHighlightTab}
               />
             ))}
           </div>
