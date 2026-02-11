@@ -97,7 +97,8 @@ export async function POST(request: Request): Promise<NextResponse> {
         ingested++
       } catch (err) {
         failed++
-        errors.push(`${report.title}: ${err instanceof Error ? err.message : 'Unknown error'}`)
+        const msg = err instanceof Error ? err.message : JSON.stringify(err)
+        errors.push(`${report.title}: ${msg}`)
       }
     }
 
