@@ -86,13 +86,14 @@ export function CommandPalette({ isOpen, onClose, onOpenAskMe }: CommandPaletteP
 
   // Load recent searches from localStorage
   useEffect(() => {
-    const stored = localStorage.getItem(RECENT_SEARCHES_KEY)
-    if (stored) {
-      try {
+    try {
+      const stored = localStorage.getItem(RECENT_SEARCHES_KEY)
+      if (stored) {
         setRecentSearches(JSON.parse(stored))
-      } catch {
-        setRecentSearches([])
       }
+    } catch {
+      // localStorage unavailable or corrupt data
+      setRecentSearches([])
     }
   }, [])
 
@@ -101,7 +102,11 @@ export function CommandPalette({ isOpen, onClose, onOpenAskMe }: CommandPaletteP
     setRecentSearches(prev => {
       const filtered = prev.filter(s => s !== search)
       const updated = [search, ...filtered].slice(0, MAX_RECENT_SEARCHES)
-      localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(updated))
+      try {
+        localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(updated))
+      } catch {
+        // localStorage unavailable
+      }
       return updated
     })
   }, [])
