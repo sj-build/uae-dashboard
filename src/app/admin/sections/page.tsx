@@ -307,14 +307,22 @@ const PAGE_CONFIGS: readonly PageConfig[] = [
     label: 'Industry',
     sections: [
       {
-        id: 'sector-grid',
-        name: 'Industry Sectors Grid',
-        dataFile: 'industry/sectors.ts',
-        component: 'SectorGrid',
+        id: 'economy-map',
+        name: 'Economy Map (GDP Treemap)',
+        dataFile: 'industry/gdp-sectors.ts',
+        component: 'EconomyMap',
         fields: [
-          { key: 'columns', label: 'Columns', type: 'number', value: 3 },
-          { key: 'showKeyPlayers', label: 'Show Key Players', type: 'boolean', value: true },
-          { key: 'showOpportunities', label: 'Show Opportunities', type: 'boolean', value: true },
+          { key: 'showKpiPanel', label: 'Show KPI Panel', type: 'boolean', value: true },
+        ],
+      },
+      {
+        id: 'cluster-grid',
+        name: 'Industry Clusters',
+        dataFile: 'industry/clusters.ts',
+        component: 'ClusterGrid',
+        fields: [
+          { key: 'defaultOpenCount', label: 'Default Open Clusters', type: 'number', value: 2 },
+          { key: 'showGdpBadges', label: 'Show GDP Badges', type: 'boolean', value: true },
           { key: 'expandable', label: 'Expandable Cards', type: 'boolean', value: true },
         ],
       },

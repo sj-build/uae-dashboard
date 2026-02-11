@@ -43,13 +43,38 @@ export const sectors: readonly Sector[] = [
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // 🎬 Tourism & Entertainment
+  // ✈️ Tourism · Hotels · MICE
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    icon: '✈️',
+    name: 'Tourism · Hotels · MICE',
+    size: 'Tourism $61.3B (2024) → $163B (2033E)',
+    cagr: 'CAGR 11.4%',
+    valueChain: [
+      { label: 'Aviation/entry' },
+      { label: 'Hotels/resorts' },
+      { label: 'MICE/exhibitions' },
+      { label: 'Retail/shopping' },
+      { label: 'Medical tourism' },
+    ],
+    players: [
+      { name: 'Dubai Tourism (DTCM)', owner: 'Dubai government', revenue: '18M+ visitors', marketCapUsd: '', valueChainPosition: 'Tourism', note: '2024 visitor target exceeded' },
+      { name: 'Emirates (airline)', owner: 'ICD/Dubai', revenueUsd: 'Rev $35.6B', marketCapUsd: 'State-owned', valueChainPosition: 'Aviation', note: '270+ cities, largest A380 operator' },
+      { name: 'Jumeirah Group', owner: 'Dubai Holding', revenue: '25+ hotels', marketCapUsd: 'State-owned', valueChainPosition: 'Hotels', note: 'Burj Al Arab, luxury hotel group' },
+      { name: 'ADNEC/DWTC', owner: 'Abu Dhabi/Dubai government', revenue: '500+ events/year', marketCapUsd: '', valueChainPosition: 'MICE', note: 'GITEX, Gulfood, IDEX mega exhibitions' },
+      { name: 'Emaar Hospitality', owner: 'Emaar/ICD', revenue: '60+ hotels', marketCapUsd: '', valueChainPosition: 'Hotels', note: 'Address Hotels, Vida Hotels' },
+    ],
+    insight: 'Korean tourists 400K+ in 2024, up 25% YoY. Growing medical tourism (cosmetic/dental) + MICE (Korean company exhibition participation).',
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 🎬 Entertainment · Media · Gaming
   // ═══════════════════════════════════════════════════════════════════════════
   {
     icon: '🎬',
-    name: 'Entertainment · Media · Tourism',
-    size: 'Tourism $61.3B (2024) → $163B (2033E)',
-    cagr: 'CAGR 11%',
+    name: 'Entertainment · Media · Gaming',
+    size: 'Entertainment $6.6B (2024) → $9.6B (2033E)',
+    cagr: 'CAGR 4.2%',
     valueChain: [
       { label: 'Content production' },
       { label: 'Streaming/distribution' },
@@ -60,11 +85,10 @@ export const sectors: readonly Sector[] = [
     players: [
       { name: 'Miral (Yas Island)', owner: "L'imad/ADQ", revenueUsd: '$4.1B invested', marketCapUsd: 'State-owned', valueChainPosition: 'Theme parks', note: 'Ferrari World, Warner Bros, SeaWorld' },
       { name: 'twofour54', owner: 'Abu Dhabi government', revenue: 'Media hub', marketCapUsd: '', valueChainPosition: 'Content production', note: 'CNN, Sky News Arabia, MBC tenants' },
-      { name: 'DWTC', owner: 'Dubai government', revenue: '500+ events/year', marketCapUsd: '', valueChainPosition: 'Events', note: 'GITEX, Gulfood and other mega exhibitions' },
       { name: 'VOX Cinemas', owner: 'Majid Al Futtaim', revenue: '600+ screens', marketCapUsd: 'Private', valueChainPosition: 'Distribution', note: 'MENA\'s largest cinema chain' },
-      { name: 'Dubai Tourism (DTCM)', owner: 'Dubai government', revenue: '18M+ visitors', marketCapUsd: '', valueChainPosition: 'Tourism', note: '1.8M+ K-Pop fans in UAE/GCC' },
+      { name: 'AD Gaming', owner: 'Abu Dhabi government', revenue: 'Esports hub', marketCapUsd: '', valueChainPosition: 'Gaming', note: 'Abu Dhabi gaming/esports ecosystem' },
     ],
-    insight: 'K-Entertainment opportunity: K-Pop concerts (Coca-Cola Arena), K-Drama IP licensing, beauty + entertainment collaborations.',
+    insight: 'K-Entertainment opportunity: K-Pop concerts (Coca-Cola Arena), K-Drama IP licensing, beauty+entertainment collabs. 1.8M+ K-Pop fans in UAE/GCC.',
   },
 
   // ═══════════════════════════════════════════════════════════════════════════

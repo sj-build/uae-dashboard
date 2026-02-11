@@ -43,13 +43,38 @@ export const sectors: readonly Sector[] = [
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // 🎬 관광 & 엔터테인먼트
+  // ✈️ 관광 · 호텔 · MICE
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    icon: '✈️',
+    name: '관광 · 호텔 · MICE',
+    size: '관광 $61.3B (2024) → $163B (2033E)',
+    cagr: 'CAGR 11.4%',
+    valueChain: [
+      { label: '항공/입국' },
+      { label: '호텔/리조트' },
+      { label: 'MICE/전시' },
+      { label: '소비/쇼핑' },
+      { label: '의료관광' },
+    ],
+    players: [
+      { name: 'Dubai Tourism (DTCM)', owner: 'Dubai 정부', revenue: '방문객 18M+', marketCapUsd: '', valueChainPosition: '관광', note: '2024 방문객 목표 초과 달성' },
+      { name: 'Emirates (항공)', owner: 'ICD/Dubai', revenueUsd: '매출 $35.6B', marketCapUsd: '국영기업', valueChainPosition: '항공', note: '270+도시, A380 최대 운영사' },
+      { name: 'Jumeirah Group', owner: 'Dubai Holding', revenue: '25+호텔', marketCapUsd: '국영기업', valueChainPosition: '호텔', note: 'Burj Al Arab, 럭셔리 호텔 그룹' },
+      { name: 'ADNEC/DWTC', owner: 'Abu Dhabi/Dubai 정부', revenue: '500+이벤트/년', marketCapUsd: '', valueChainPosition: 'MICE', note: 'GITEX, Gulfood, IDEX 등 메가 전시' },
+      { name: 'Emaar Hospitality', owner: 'Emaar/ICD', revenue: '60+호텔', marketCapUsd: '', valueChainPosition: '호텔', note: 'Address Hotels, Vida Hotels' },
+    ],
+    insight: '한국 관광객 2024년 40만명+, 전년 대비 25% 증가. 의료관광(성형/치과) + MICE(한국기업 전시 참가) 확대 중.',
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 🎬 엔터테인먼트 · 미디어 · 게이밍
   // ═══════════════════════════════════════════════════════════════════════════
   {
     icon: '🎬',
-    name: '엔터테인먼트 · 미디어 · 관광',
-    size: '관광 $61.3B (2024) → $163B (2033E)',
-    cagr: 'CAGR 11%',
+    name: '엔터테인먼트 · 미디어 · 게이밍',
+    size: '엔터테인먼트 $6.6B (2024) → $9.6B (2033E)',
+    cagr: 'CAGR 4.2%',
     valueChain: [
       { label: '콘텐츠 제작' },
       { label: '스트리밍/배급' },
@@ -60,11 +85,10 @@ export const sectors: readonly Sector[] = [
     players: [
       { name: 'Miral (Yas Island)', owner: "L'imad/ADQ", revenueUsd: '$4.1B 투자', marketCapUsd: '국영기업', valueChainPosition: '테마파크', note: 'Ferrari World, Warner Bros, SeaWorld' },
       { name: 'twofour54', owner: 'Abu Dhabi 정부', revenue: '미디어 허브', marketCapUsd: '', valueChainPosition: '콘텐츠 제작', note: 'CNN, Sky News Arabia, MBC 입주' },
-      { name: 'DWTC', owner: 'Dubai 정부', revenue: '500+이벤트/년', marketCapUsd: '', valueChainPosition: '이벤트', note: 'GITEX, Gulfood 등 메가 전시' },
       { name: 'VOX Cinemas', owner: 'Majid Al Futtaim', revenue: '600+스크린', marketCapUsd: '비상장', valueChainPosition: '배급', note: 'MENA 최대 시네마 체인' },
-      { name: 'Dubai Tourism (DTCM)', owner: 'Dubai 정부', revenue: '방문객 18M+', marketCapUsd: '', valueChainPosition: '관광', note: 'K-Pop 팬 1.8M+ UAE/GCC' },
+      { name: 'AD Gaming', owner: 'Abu Dhabi 정부', revenue: 'e스포츠 허브', marketCapUsd: '', valueChainPosition: '게이밍', note: 'Abu Dhabi 게이밍/e스포츠 생태계' },
     ],
-    insight: 'K-Entertainment 기회: K-Pop 공연 (Coca-Cola Arena), K-Drama IP 라이선싱, 뷰티+엔터 컬래버.',
+    insight: 'K-Entertainment 기회: K-Pop 공연 (Coca-Cola Arena), K-Drama IP 라이선싱, 뷰티+엔터 컬래버. K-Pop 팬 UAE/GCC 1.8M+.',
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
