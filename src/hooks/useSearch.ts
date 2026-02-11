@@ -154,45 +154,63 @@ export function useSearch() {
 
         const decoder = new TextDecoder()
         let accumulatedContent = ''
+        let doneReceived = false
 
-        while (true) {
-          const { done, value } = await reader.read()
-          if (done) break
+        try {
+          while (true) {
+            const { done, value } = await reader.read()
+            if (done) break
 
-          const chunk = decoder.decode(value, { stream: true })
-          const lines = chunk.split('\n')
+            const chunk = decoder.decode(value, { stream: true })
+            const lines = chunk.split('\n')
 
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              try {
-                const event: StreamEvent = JSON.parse(line.slice(6))
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                try {
+                  const event: StreamEvent = JSON.parse(line.slice(6))
 
-                if (event.type === 'metadata') {
-                  if (event.turnCount !== undefined) {
-                    setTurnCount(event.turnCount)
+                  if (event.type === 'metadata') {
+                    if (event.turnCount !== undefined) {
+                      setTurnCount(event.turnCount)
+                    }
+                    if (event.limitReached) {
+                      setLimitReached(true)
+                    }
+                    if (event.sources && event.sources.length > 0) {
+                      setSources(event.sources)
+                    }
+                  } else if (event.type === 'content' && event.text) {
+                    accumulatedContent += event.text
+                    setStreamingContent(accumulatedContent)
+                  } else if (event.type === 'done') {
+                    doneReceived = true
+                    const assistantMessage: ChatMessage = { role: 'assistant', content: accumulatedContent }
+                    setMessages(prev => [...prev, assistantMessage])
+                    setStreamingContent('')
+                  } else if (event.type === 'error') {
+                    throw new Error(event.error || 'Stream error')
                   }
-                  if (event.limitReached) {
-                    setLimitReached(true)
+                } catch (parseError) {
+                  // Skip invalid JSON lines (but re-throw explicit stream errors)
+                  if (parseError instanceof Error && parseError.message !== 'Stream error' && !parseError.message.startsWith('Stream')) {
+                    continue
                   }
-                  if (event.sources && event.sources.length > 0) {
-                    setSources(event.sources)
-                  }
-                } else if (event.type === 'content' && event.text) {
-                  accumulatedContent += event.text
-                  setStreamingContent(accumulatedContent)
-                } else if (event.type === 'done') {
-                  // Finalize the assistant message
-                  const assistantMessage: ChatMessage = { role: 'assistant', content: accumulatedContent }
-                  setMessages(prev => [...prev, assistantMessage])
-                  setStreamingContent('')
-                } else if (event.type === 'error') {
-                  throw new Error(event.error || 'Stream error')
+                  throw parseError
                 }
-              } catch (parseError) {
-                // Skip invalid JSON lines
               }
             }
           }
+        } catch (streamError) {
+          // Stream broke — save partial content if we have any
+          if (!doneReceived && accumulatedContent) {
+            const assistantMessage: ChatMessage = { role: 'assistant', content: accumulatedContent }
+            setMessages(prev => [...prev, assistantMessage])
+            setStreamingContent('')
+          } else if (!doneReceived && !accumulatedContent) {
+            // No response at all — re-throw to remove user message in outer catch
+            throw streamError
+          }
+          // If doneReceived is true, message was already saved — do nothing
         }
       } else {
         // Handle non-streaming response (fallback)
@@ -215,8 +233,14 @@ export function useSearch() {
         }
       }
     } catch (error) {
-      // Remove the user message on error
-      setMessages(prev => prev.slice(0, -1))
+      // Only remove user message if no assistant response was added
+      setMessages(prev => {
+        const lastMsg = prev[prev.length - 1]
+        // If last message is the user's question (no response yet), remove it
+        if (lastMsg?.role === 'user') return prev.slice(0, -1)
+        // Otherwise an assistant response exists — keep everything
+        return prev
+      })
       setStreamingContent('')
 
       if (error instanceof Error && error.name !== 'AbortError') {
