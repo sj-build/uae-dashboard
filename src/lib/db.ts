@@ -52,6 +52,48 @@ export async function upsertDocumentFromNews(article: {
   return data?.id as string | undefined
 }
 
+export async function upsertDocumentFromReport(report: {
+  title: string
+  url: string
+  content: string
+  summary: string
+  publisher: string
+  published_at?: string | null
+  category?: string | null
+  tags?: string[]
+}) {
+  const supabase = getSupabaseAdmin()
+  const content_hash = sha256(report.url)
+
+  const { data, error } = await supabase
+    .from('documents')
+    .upsert({
+      source: 'report',
+      title: report.title,
+      content: report.content,
+      summary: report.summary,
+      url: report.url,
+      tags: report.tags ?? [],
+      category: report.category ?? null,
+      metadata: {
+        publisher: report.publisher,
+        type: 'industry_report',
+      },
+      published_at: report.published_at ?? null,
+      content_hash,
+      last_updated: new Date().toISOString(),
+    }, { onConflict: 'content_hash' })
+    .select('id')
+    .single()
+
+  if (error && !error.message.includes('duplicate')) {
+    console.error('upsertDocumentFromReport error:', error)
+    throw error
+  }
+
+  return data?.id as string | undefined
+}
+
 export async function upsertDocumentFromAskMe(session: {
   question: string
   answer: string
