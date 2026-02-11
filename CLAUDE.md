@@ -72,6 +72,40 @@ Key features:
 - Category tagging: politics, economy, society, technology, culture, investment, real-estate
 - Saves to `news_articles` table
 
+### 4. Eval Agent
+
+**Purpose**: 콘텐츠 팩트체크 및 정확성 검증
+**Entry**: `src/app/api/eval/run/route.ts`
+**Core Logic**: `src/lib/eval/` (claim-extractor, rules-checker, llm-judge, fix-applier)
+**Admin UI**: `src/app/admin/eval/page.tsx`
+**Schedule**: Daily (rules check) + Weekly (LLM factcheck) via Vercel Cron
+
+Pipeline:
+1. Site snapshot + knowledge snapshot 수집
+2. Claim 추출 (structured parsing + LLM extraction)
+3. 검증 수행:
+   - `daily_rules`: 패턴 기반 빠른 규칙 체크
+   - `weekly_factcheck`: Claude LLM 기반 심층 팩트체크 (우선 페이지: economy, legal, politics)
+   - `on_demand`: 두 가지 모두 실행
+4. Issue 생성 (verdict: supported / needs_update / contradicted / unverifiable)
+5. Suggested fix + patch 제안
+
+Key features:
+- Claim types: numeric, definition, policy, timeline, comparison
+- Source registry 기반 신뢰도 평가 (trust_level 1-5)
+- Severity 분류 (high / med / low) + confidence score
+- Admin dashboard에서 issue triage, fix approve 가능
+- `eval_runs`, `eval_issues` 테이블에 이력 저장
+
+API endpoints:
+- `POST /api/eval/run` - Eval 실행 (auth: x-cron-secret)
+- `GET /api/eval/run` - 최근 실행 이력 조회
+- `GET /api/admin/eval` - Admin 대시보드 데이터
+- `POST /api/admin/eval/trigger` - Admin에서 수동 트리거
+- `GET /api/admin/eval/issues` - Issue 목록 조회
+- `GET /api/cron/eval-daily` - Daily cron 엔트리
+- `GET /api/cron/eval-weekly` - Weekly cron 엔트리
+
 ## Tools
 
 | Tool | Purpose | Entry |
@@ -103,6 +137,10 @@ Static expertise in `src/data/`:
 | `news_articles` | Crawled news headlines |
 | `insights` | Synthesized investment insights |
 | `question_logs` | Analytics |
+| `eval_runs` | Eval 실행 이력 (type, status, summary) |
+| `eval_issues` | 팩트체크 이슈 (claim, verdict, severity, suggested fix) |
+| `source_registry` | 검증 소스 레지스트리 (trust_level 1-5) |
+| `content_snapshots` | 사이트/지식 스냅샷 (eval 비교용) |
 
 ## Architecture Rules
 
@@ -143,7 +181,8 @@ src/
       telegram/webhook/         # Telegram Agent
       memory/sync-news/         # News Agent
       memory/synthesize-insights/ # Insight synthesis (cron)
-      cron/                     # Scheduled jobs
+      eval/run/                 # Eval Agent entry
+      cron/                     # Scheduled jobs (incl. eval-daily, eval-weekly)
     admin/                      # Admin panels
     (dashboard)/                # Public dashboard pages
   components/
@@ -159,6 +198,7 @@ src/
     telegram/handler.ts         # Telegram bot logic
     google-search.ts            # Web search integration
     keepa-amazon.ts             # Amazon UAE product data
+    eval/                       # Eval Agent core (claim-extractor, rules-checker, llm-judge, fix-applier)
   data/                         # Static UAE expertise data
 supabase/                       # Migrations & config
 ```
