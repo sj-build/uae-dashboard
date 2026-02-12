@@ -248,7 +248,7 @@ export async function POST(request: Request): Promise<Response> {
     if (useStreaming) {
       const stream = await client.messages.stream({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 4096,
+        max_tokens: 8192,
         system: systemPrompt,
         messages: claudeMessages,
       })
@@ -269,6 +269,7 @@ export async function POST(request: Request): Promise<Response> {
             controller.enqueue(encoder.encode(`data: ${metadata}\n\n`))
 
             // Stream the content
+            let stopReason = 'end_turn'
             for await (const event of stream) {
               if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
                 fullResponse += event.delta.text
@@ -277,6 +278,39 @@ export async function POST(request: Request): Promise<Response> {
                   text: event.delta.text,
                 })
                 controller.enqueue(encoder.encode(`data: ${chunk}\n\n`))
+              } else if (event.type === 'message_delta' && 'stop_reason' in event.delta) {
+                stopReason = (event.delta as { stop_reason: string }).stop_reason
+              }
+            }
+
+            // Auto-continue if response was cut off (max_tokens hit)
+            if (stopReason === 'max_tokens') {
+              const elapsed = Date.now() - startTime
+              // Only continue if we have enough time budget (< 40s elapsed)
+              if (elapsed < 40000) {
+                const continuationMessages = [
+                  ...claudeMessages,
+                  { role: 'assistant' as const, content: fullResponse },
+                  { role: 'user' as const, content: '이어서 계속 작성해주세요. 중단된 부분부터 이어서 써주세요.' },
+                ]
+
+                const continuationStream = await client.messages.stream({
+                  model: 'claude-sonnet-4-20250514',
+                  max_tokens: 4096,
+                  system: systemPrompt,
+                  messages: continuationMessages,
+                })
+
+                for await (const event of continuationStream) {
+                  if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
+                    fullResponse += event.delta.text
+                    const chunk = JSON.stringify({
+                      type: 'content',
+                      text: event.delta.text,
+                    })
+                    controller.enqueue(encoder.encode(`data: ${chunk}\n\n`))
+                  }
+                }
               }
             }
 
@@ -315,7 +349,7 @@ export async function POST(request: Request): Promise<Response> {
     // Non-streaming response (fallback)
     const message = await client.messages.create({
       model: 'claude-sonnet-4-20250514',
-      max_tokens: 4096,
+      max_tokens: 8192,
       system: systemPrompt,
       messages: claudeMessages,
     })

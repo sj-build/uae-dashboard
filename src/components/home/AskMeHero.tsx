@@ -90,7 +90,7 @@ export function AskMeHero({ onOpenSearch, onQuickQuestion }: AskMeHeroProps) {
         <div className="relative">
           <div className="inline-flex items-center gap-2.5 mb-4 px-4 py-2 rounded-full bg-gold/[0.08] border border-gold/15">
             <Sparkles className="w-4 h-4 text-gold floating" />
-            <span className="text-[11px] font-bold text-gold uppercase tracking-[0.2em]">AI Assistant</span>
+            <span className="text-[11px] font-bold text-gold uppercase tracking-[0.2em]">{locale === 'en' ? 'AI Assistant' : 'AI 어시스턴트'}</span>
           </div>
 
           <h1 className="text-[28px] md:text-[34px] font-display font-bold text-t1 mb-3 tracking-tight">

@@ -60,6 +60,7 @@ export function useSearch() {
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null)
   const [savedConversations, setSavedConversations] = useState<SavedConversation[]>([])
   const abortRef = useRef<AbortController | null>(null)
+  const searchIdRef = useRef(0)
   const conversationIdRef = useRef<string | null>(null)
 
   // Sync ref with state
@@ -122,6 +123,7 @@ export function useSearch() {
     abortRef.current?.abort()
     const controller = new AbortController()
     abortRef.current = controller
+    const currentSearchId = ++searchIdRef.current
 
     // Add user message to state immediately
     const userMessage: ChatMessage = { role: 'user', content: query }
@@ -271,7 +273,10 @@ export function useSearch() {
         console.error('Search error:', error.message)
       }
     } finally {
-      setIsLoading(false)
+      // Only the latest search can clear loading state (prevents abort race condition)
+      if (currentSearchId === searchIdRef.current) {
+        setIsLoading(false)
+      }
     }
   }, [messages, limitReached, turnCount])
 

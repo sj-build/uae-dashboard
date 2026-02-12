@@ -15,7 +15,7 @@ export const ko: Translations = {
   },
   header: {
     title: 'All About UAE',
-    subtitle: 'Intelligence Dashboard',
+    subtitle: 'UAE 종합 인텔리전스',
   },
   search: {
     placeholder: 'UAE에 대해 궁금한 것을 물어보세요... (예: Abu Dhabi vs Dubai 차이, 에너지 산업 현황)',
